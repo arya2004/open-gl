@@ -1,7 +1,21 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+
 using namespace std;
+
+void delay(int number_of_seconds)
+{
+    // Converting time into milli_seconds
+    int milli_seconds = 1000 * number_of_seconds;
+
+    // Storing start time
+    clock_t start_time = clock();
+
+    // looping till required time is not achieved
+    while (clock() < start_time + milli_seconds)
+        ;
+}
 
 int ma(void)
 {
@@ -112,53 +126,51 @@ int m(void)
 }
 //_________________________________________
 
-void draw_pixel(float _x, float _y) {
+void draw_pixel(double _x, double _y) {
+    
+   
+    double x = _x/1000.0 ;
+    double y = _y/1000.0 ;
   
-    float x = _x/100 ;
-    float y = _y/100 ;
-    cout << x;
-    cout << y;
-    cout << "\n\n";
-    glVertex2f(x, y);
+    glVertex2d(x, y);
+    
+    
 
 }
 
 
-void MidPointELlipse(float _rx, float _ry, float _xc, float _yc)
+void MidPointELlipse(double _rx, double _ry, double _xc, double _yc)
 {
-    float x = 0;
-    float y = _ry;
-    float d1 = (_ry * _ry)
-        - (_rx * _rx * _ry)
-        + (0.25 * _rx * _rx);
-   float  dx = 2 * _ry * _ry * x;
-   float dy = 2 * _rx * _rx * y;
+    double x = 0.0;
+    double y = _ry;
+    double d1 = (_ry * _ry) - (_rx * _rx * _ry) + (0.25 * _rx * _rx);
+    double  dx = 2.0 * _ry * _ry * x;
+    double dy = 2.0 * _rx * _rx * y;
 
    //region 1
    while (dx < dy)
-   {
+   {    
+
        draw_pixel(x + _xc, y + _yc);
        draw_pixel(-x + _xc, y + _yc);
        draw_pixel(x + _xc, -y + _yc);
        draw_pixel(-x + _xc, -y + _yc);
     
        if (d1 < 0) {
-           x++;
+           x = x + 1.0;
            dx = dx + (2 * _ry * _ry);
            d1 = d1 + dx + (_ry * _ry);
        }
        else {
-           x++;
-           y--;
-           dx = dx + (2 * _ry * _ry);
-           dy = dy - (2 * _rx * _rx);
+           x = x + 1.0;
+           y = y - 1.0;
+           dx = dx + (2.0 * _ry * _ry);
+           dy = dy - (2.0 * _rx * _rx);
            d1 = d1 + dx - dy + (_ry * _ry);
        }
    }
    //region2
-   float d2 = ((_ry * _ry) * ((x + 0.5) * (x + 0.5)))
-       + ((_rx * _rx) * ((y - 1) * (y - 1)))
-       - (_rx * _rx * _ry * _ry);
+   double d2 = ((_ry * _ry) * ((x + 0.5) * (x + 0.5))) + ((_rx * _rx) * ((y - 1.0) * (y - 1.0))) - (_rx * _rx * _ry * _ry);
 
    while (y >= 0)
    {
@@ -168,13 +180,13 @@ void MidPointELlipse(float _rx, float _ry, float _xc, float _yc)
        draw_pixel(-x + _xc, -y + _yc);
 
        if (d2 > 0) {
-           y--;
+           y = y -1.0;
            dy = dy - (2 * _rx * _rx);
            d2 = d2 + (_rx * _rx) - dy;
        }
        else {
-           y--;
-           x++;
+           y = y - 1.0;
+           x = x + 1.0;
            dx = dx + (2 * _ry * _ry);
            dy = dy - (2 * _rx * _rx);
            d2 = d2 + dx - dy + (_rx * _rx);
@@ -218,7 +230,7 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         glBegin(GL_POINTS);
-        MidPointELlipse(90,44.5,0,0);
+      MidPointELlipse(600.0,400.0,0,0);
        
         
         glEnd();
