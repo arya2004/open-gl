@@ -197,6 +197,66 @@ void MidPointELlipse(double _rx, double _ry, double _xc, double _yc)
 //_________________________________________
 
 
+void house()
+{
+    glBegin(GL_LINES);
+    //front
+    glVertex2f(0.0, 0.0);
+    glVertex2f(0.0, -0.60);
+
+    glVertex2f(0.0, -0.60);
+    glVertex2f(-0.60, -0.60);
+
+    glVertex2f(-0.60, -0.60);
+    glVertex2f(-0.60, 0.00);
+
+    glVertex2f(-0.60, 0.00);
+    glVertex2f(0.0, 0.0);
+
+    //side
+    glVertex2f(0.0, 0.00);
+    glVertex2f(0.80, 0.20);
+
+    glVertex2f(0.80, 0.20);
+    glVertex2f(0.80, -0.40);
+
+
+    glVertex2f(0.80, -0.40);
+    glVertex2f(0.0, -0.60);
+
+    //front top
+    glVertex2f(-0.60, 0.00);
+    glVertex2f(-0.30, 0.40);
+
+    glVertex2f(-0.30, 0.40);
+    glVertex2f(0.0,0.00);
+
+    //slope
+
+    glVertex2f(-0.30, 0.40);
+    glVertex2f(0.50, 0.60);
+
+    glVertex2f(0.50, 0.60);
+    glVertex2f(0.80, 0.20);
+
+    //door
+
+    glVertex2f(-0.20, -0.60);
+    glVertex2f(-0.20, -0.20);
+
+    glVertex2f(-0.20, -0.20);
+    glVertex2f(-0.40, -0.20);
+
+    glVertex2f(-0.40, -0.20);
+    glVertex2f(-0.40, -0.60);
+
+    glEnd();
+   
+
+}
+
+
+//_____________________________________________
 int main()
 {
     GLFWwindow* window;
@@ -229,11 +289,10 @@ int main()
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glBegin(GL_POINTS);
-      MidPointELlipse(600.0,400.0,0,0);
-       
-        
-        glEnd();
+      //  glBegin(GL_POINTS);
+      //MidPointELlipse(600.0,400.0,0,0);
+      // glEnd();
+        house();
 
 
         /* Swap front and back buffers */
@@ -246,7 +305,7 @@ int main()
      //   cin >> q;
     glfwTerminate();
     return 0;
-    return 0;
+    
 }
 
 
