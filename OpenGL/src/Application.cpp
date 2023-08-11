@@ -134,8 +134,7 @@ void draw_pixel(double _x, double _y) {
   
     glVertex2d(x, y);
     
-    
-
+   
 }
 
 
@@ -253,10 +252,325 @@ void house()
     glEnd();
    
 
+}//_____________________________________________
+float greaterModulo(int i, int j)
+{
+    int ii = i;
+    int jj = j;
+    if (i < 0)
+    {
+        ii = -i;
+
+    }
+    if (j < 0)
+    {
+        jj = -j;
+    }
+    if (jj > ii)
+    {
+        return j;
+    }
+    else
+    {
+        return i;
+    }
+}
+
+void dda_infinite(int x,int y1, int y2)
+{
+    int temp_Y = y1;
+
+    while (temp_Y <= y2)
+    {
+
+        draw_pixel(x, temp_Y);
+        
+        temp_Y = temp_Y + 1;
+        // delay(10);
+    }
+}
+
+void dda_zero(int x1, int x2, int y)
+{
+    int temp_X = x1;
+
+    while (temp_X <= x2)
+    {
+
+        draw_pixel(temp_X, y);
+
+        temp_X = temp_X + 1;
+        // delay(10);
+    }
+}
+
+void dda_positive(int x1, int y1, int x2, int y2)
+{
+    float delta_x = x2 - x1;
+    float delta_y = y2 - y1;
+
+    float step = greaterModulo(delta_x, delta_y);
+    
+
+
+    float inc_x = delta_x / step;
+    float inc_y = delta_y / step;
+
+    float temp_x = x1;
+    float temp_y = y1;
+    while (temp_x <= x2 && temp_y <= y2)
+    {
+
+        draw_pixel(temp_x, temp_y);
+        temp_x = temp_x + inc_x;
+        temp_y = temp_y + inc_y;
+        // delay(10);
+    }
 }
 
 
+void dda_negative(int x1, int y1, int x2, int y2)
+{
+    float delta_x = x2 - x1;
+    float delta_y = y2 - y1;
+
+    float step = greaterModulo(delta_x, delta_y);
+
+
+
+    float inc_x = delta_x / step;
+    float inc_y = delta_y / step;
+
+    float temp_x = x1;
+    float temp_y = y1;
+    while (temp_x <= x2 && temp_y >= y2)
+    {
+
+        draw_pixel(temp_x, temp_y);
+        temp_x = temp_x + inc_x;
+        temp_y = temp_y + inc_y;
+        // delay(10);
+    }
+}
+
+
+void dda_secondQuad(int x1, int y1, int x2, int y2)
+{
+    float delta_x = x2 - x1;
+    float delta_y = y2 - y1;
+
+    float step = greaterModulo(delta_x, delta_y);
+  
+
+
+    float inc_x = delta_x / step;
+    float inc_y = delta_y / step;
+
+    float temp_x = x1;
+    float temp_y = y1;
+    while (temp_x >= x2 && temp_y <= y2)
+    {
+
+        draw_pixel(temp_x, temp_y);
+        temp_x = temp_x + inc_x;
+        temp_y = temp_y + inc_y;
+        // delay(10);
+    }
+}
+
+void dda_thirdQuad(int x1, int y1, int x2, int y2)
+{
+    float delta_x = x2 - x1;
+    float delta_y = y2 - y1;
+
+    float step = greaterModulo(delta_x, delta_y);
+ 
+
+
+    float inc_x = delta_x / step;
+    float inc_y = delta_y / step;
+
+    float temp_x = x1;
+    float temp_y = y1;
+    while (temp_x >= x2 && temp_y >= y2)
+    {
+
+        draw_pixel(temp_x, temp_y);
+        temp_x = temp_x + inc_x;
+        temp_y = temp_y + inc_y;
+        // delay(10);
+    }
+}
+
+void dda_(int x1, int y1, int x2, int y2)
+{
+    float delta_x = x2 - x1;
+    float delta_y = y2 - y1;
+
+    if (delta_x == 0)
+    {
+        if (delta_y > 0)
+        {
+            dda_infinite(x1, y1, y2);
+        }
+        else
+        {
+            dda_infinite(x1, y2, y1);
+        }
+    }
+    else if (delta_y == 0)
+    {
+        if (delta_x > 0)
+        {
+            dda_zero(x1, y2, y1);
+        }
+        else
+        {
+            dda_zero(x2, x1, y1);
+        }
+    }
+    else if (delta_x > 0 && delta_y > 0)
+    {
+        dda_positive(x1, y1, x2, y2);
+    }
+    else if (delta_x < 0 && delta_y > 0)
+    {
+        dda_secondQuad(x1, y1, x2, y2);
+    }
+    else if (delta_x > 0 && delta_y < 0)
+    {
+        dda_negative(x1, y1, x2, y2);
+    }
+    else if (delta_x < 0 && delta_y < 0)
+    {
+        dda_thirdQuad(x1, y1, x2, y2);
+    }
+}
 //_____________________________________________
+
+void bressenhamLine(int x1, int y1, int x2, int y2)
+{
+    int x = x1;
+    int y = y1;
+    int dx = x2 - x1;
+    int dy = y2 - y1;
+
+    dx = x2 - x1;
+    dy = y2 - y1;
+    int p = 2 * dy - dx;
+    float m = dy / dx;
+ 
+    if (abs(m) < 1)
+    {
+
+        for (int i = 0; i <= dx; i++)
+        {
+            draw_pixel(x, y);
+            x++;
+            if (p < 0)
+            {
+                p = p + 2 * dy;
+            }
+            else
+            {
+                p = p + 2 * dy - 2 * dx;
+                y++;
+            }
+        }
+    }
+    else if (abs(m) >= 1)
+    {
+        for (int i = 0; i <= dy; i++)
+        {
+            draw_pixel(x, y);
+            y++;
+            if (p < 0)
+            {
+                p = p + 2 * dx;
+            }
+            else
+            {
+                p = p + 2 * dx - 2 * dy;
+                x++;
+            }
+        }
+    }
+}
+//_____________________________________________
+
+void drawCircle(int xc, int yc, int x, int y)
+{
+    draw_pixel(xc + x, yc + y); // o7
+    draw_pixel(xc - x, yc + y); // 06
+    draw_pixel(xc + x, yc - y); // octant 2
+    draw_pixel(xc - x, yc - y); // o 3
+    draw_pixel(xc + y, yc + x); // o 8
+    draw_pixel(xc - y, yc + x); // o5
+    draw_pixel(xc + y, yc - x); // o 1
+    draw_pixel(xc - y, yc - x); // o4
+}
+
+void circleBres(int r)
+{
+    int xc = 0;
+    int yc = 0;
+    int x = 0;
+    int y = r;
+    int s = 3 - 2 * r;
+    drawCircle(xc, yc, x, y);
+    draw_pixel(xc + x, yc + y);
+    while (x <= y)
+    {
+        x++;
+        if (s <= 0)
+        {
+            s = s + 4 * x + 6;
+        }
+        else
+        {
+            y--;
+            s = s + 4 * (x - y) + 10;
+        }
+
+        drawCircle(xc, yc, x, y);
+        draw_pixel(xc + x, yc + y);
+    }
+}
+//_____________________________________________
+
+void midPointCircleDraw(int x_centre, int y_centre, int r)
+{
+    int x = r, y = 0;
+
+
+    int P = 1 - r;
+    while (x > y)
+    {
+        y++;
+
+
+        if (P <= 0)
+        {
+            P = P + (2*y) + 1;
+        }
+            
+
+        else
+        {
+            x--;
+            P = P + (2*y) - (2*x) + 1;
+        }
+
+        drawCircle(x_centre, y_centre, x, y);
+
+      
+        
+    }
+}
+
+
+//----------------------------------------------
+
 int main()
 {
     GLFWwindow* window;
@@ -288,11 +602,17 @@ int main()
    while (!glfwWindowShouldClose(window)){
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
+       
+        int raduius, xc,yc;
+        cout << "enter x-centre, y-centre and radius for midpoint circple\n";
+        cin >> xc >> yc >> raduius;
+    
 
-      //  glBegin(GL_POINTS);
-      //MidPointELlipse(600.0,400.0,0,0);
-      // glEnd();
-        house();
+        glBegin(GL_POINTS);
+        midPointCircleDraw(xc, yc ,raduius);
+       
+        glEnd();
+        //house();
 
 
         /* Swap front and back buffers */
