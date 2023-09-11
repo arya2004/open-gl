@@ -1,62 +1,48 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <vector>
-#include <algorithm>
+#include <queue>
 
-// Define the window dimensions
+
 const int windowWidth = 800;
 const int windowHeight = 600;
 
-// Define a structure to represent a vertex
-struct Vertex {
-    int x, y;
-    Vertex(int _x, int _y) : x(_x), y(_y) {}
-};
 
-// Function to draw a horizontal line between two points
-void drawHorizontalLine(int x1, int x2, int y, std::vector<unsigned char>& pixels) {
-    for (int x = std::min(x1, x2); x <= std::max(x1, x2); ++x) {
-        int index = (y * windowWidth + x) * 3;
-        pixels[index] = 255;   // Red
-        pixels[index + 1] = 0; // Green
-        pixels[index + 2] = 0; // Blue
+void setPixel(int x, int y, std::vector<unsigned char>& pixels, int width, unsigned char r, unsigned char g, unsigned char b) {
+    if (x >= 0 && x < width && y >= 0 && y < windowHeight) {
+        int index = (y * width + x) * 3;
+        pixels[index] = r;
+        pixels[index + 1] = g;
+        pixels[index + 2] = b;
     }
 }
 
-// Function to fill a convex polygon using scanline fill algorithm
-void scanFillConvexPolygon(const std::vector<Vertex>& vertices, std::vector<unsigned char>& pixels) {
-    int minY = windowHeight;
-    int maxY = 0;
+//  NON RECURSIVE APPROACH, CAUSE STACK OVERFLOW
 
-    // Find the minimum and maximum Y coordinates of the polygon
-    for (const Vertex& vertex : vertices) {
-        minY = std::min(minY, vertex.y);
-        maxY = std::max(maxY, vertex.y);
-    }
+void Algoirthm(int x, int y, std::vector<unsigned char>& pixels, int width, int height, unsigned char targetColorR, unsigned char targetColorG, unsigned char targetColorB, unsigned char fillColorR, unsigned char fillColorG, unsigned char fillColorB) {
+    std::queue<std::pair<int, int>> q;
+    q.push(std::make_pair(x, y));
 
-    // Iterate through scanlines
-    for (int y = minY; y <= maxY; ++y) {
-        std::vector<int> intersections;
+    while (!q.empty()) {
+        std::pair<int, int> current = q.front();
+        q.pop();
 
-        // Find intersections of the scanline with polygon edges
-        for (size_t i = 0; i < vertices.size(); ++i) {
-            const Vertex& v1 = vertices[i];
-            const Vertex& v2 = vertices[(i + 1) % vertices.size()];
+        int cx = current.first;
+        int cy = current.second;
 
-            if ((v1.y <= y && v2.y > y) || (v2.y <= y && v1.y > y)) {
-                int x = v1.x + (static_cast<double>(y - v1.y) / (v2.y - v1.y)) * (v2.x - v1.x);
-                intersections.push_back(x);
-            }
+        if (cx < 0 || cx >= width || cy < 0 || cy >= height) {
+            continue;
         }
 
-        // Sort the intersections
-        std::sort(intersections.begin(), intersections.end());
+        int index = (cy * width + cx) * 3;
 
-        // Draw horizontal line segments between pairs of intersections
-        for (size_t i = 0; i < intersections.size(); i += 2) {
-            int x1 = intersections[i];
-            int x2 = intersections[i + 1];
-            drawHorizontalLine(x1, x2, y, pixels);
+        if (pixels[index] == targetColorR && pixels[index + 1] == targetColorG && pixels[index + 2] == targetColorB) {
+            setPixel(cx, cy, pixels, width, fillColorR, fillColorG, fillColorB);
+
+            q.push(std::make_pair(cx + 1, cy));
+            q.push(std::make_pair(cx - 1, cy));
+            q.push(std::make_pair(cx, cy + 1));
+            q.push(std::make_pair(cx, cy - 1));
         }
     }
 }
@@ -67,7 +53,7 @@ int main() {
         return -1;
     }
 
-    GLFWwindow* window = glfwCreateWindow(windowWidth, windowHeight, "Scanline Fill Example", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(windowWidth, windowHeight, "C-57", nullptr, nullptr);
     if (!window) {
         std::cerr << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
@@ -76,29 +62,51 @@ int main() {
 
     glfwMakeContextCurrent(window);
 
-    // Set up OpenGL viewport
+  
     glViewport(0, 0, windowWidth, windowHeight);
 
     // Create a buffer for storing pixel data
-    std::vector<unsigned char> pixels(windowWidth * windowHeight * 3, 0); // Initialize with black color
+    std::vector<unsigned char> pixels(windowWidth * windowHeight * 3, 255); 
 
-    // Define the vertices of the convex polygon
-    int a;
-    std::cout << "enter number of vertices for convex poly\n";
-    std::cin >> a;
-    std::vector<Vertex> vertices;
-    for (int i = 0; i < a; i++)
-    {
-        int x = 0; int yy = 0;
-        std::cin >> x;
-        std::cin >> yy;
-        vertices.push_back(Vertex(x, yy));
-       
-    }
+    glClear(GL_COLOR_BUFFER_BIT);
+    glColor3f(0.0, 0.0, 0.0);
 
+    float x1 = 0;
+    float x2 = 0;
+    float y2 = 0;
+    float y1 = 0;
+    std::cout << "enter x1,y1\n";
+    std::cin >> x1;
+    std::cin >> y1;
+    std::cout << "enter x2,y2\n";
+    std::cin >> x2;
+    std::cin >> y2;
+    glBegin(GL_LINES);
+    glVertex2f(x1/800, y1/600);
+    glVertex2f(x2 / 800, y1 / 600);
 
-    // Fill the convex polygon using scanline fill
-    scanFillConvexPolygon(vertices, pixels);
+    glVertex2f(x2 / 800, y1 / 600);
+    glVertex2f(x2 / 800, y2 / 600);
+
+    glVertex2f(x2 / 800, y2 / 600);
+    glVertex2f(x1 / 800, y2 / 600);
+
+    glVertex2f(x1 / 800, y2 / 600);
+    glVertex2f(x1 / 800, y1 / 600);
+    glEnd();
+
+   
+
+    int startX = 300;
+    int startY = 250;
+    unsigned char targetColorR = 255; // White color (background)
+    unsigned char targetColorG = 255;
+    unsigned char targetColorB = 255;
+    unsigned char fillColorR = 255; // Red color (interior)
+    unsigned char fillColorG = 0;
+    unsigned char fillColorB = 0;
+
+    Algoirthm(startX, startY, pixels, windowWidth, windowHeight, targetColorR, targetColorG, targetColorB, fillColorR, fillColorG, fillColorB);
 
     while (!glfwWindowShouldClose(window)) {
         glClear(GL_COLOR_BUFFER_BIT);
