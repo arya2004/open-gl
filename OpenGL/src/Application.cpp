@@ -1,7 +1,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-
+#include <vector>
+#include <cmath>
 using namespace std;
 
 void delay(int number_of_seconds)
@@ -571,6 +572,666 @@ void midPointCircleDraw(int x_centre, int y_centre, int r)
 
 //----------------------------------------------
 
+void boundaryqFill(int x, int y, float fillColor[], float borderColor[]) {
+    float currentColor[3];
+    glReadPixels(x, y, 1, 1, GL_RGB, GL_FLOAT, currentColor);
+
+    if ((currentColor[0] != borderColor[0] || currentColor[1] != borderColor[1] || currentColor[2] != borderColor[2]) &&
+        (currentColor[0] != fillColor[0] || currentColor[1] != fillColor[1] || currentColor[2] != fillColor[2])) {
+
+        draw_pixel(x, y);
+
+        boundaryqFill(x + 1, y, fillColor, borderColor); // Right
+        boundaryqFill(x - 1, y, fillColor, borderColor); // Left
+        boundaryqFill(x, y + 1, fillColor, borderColor); // Up
+        boundaryqFill(x, y - 1, fillColor, borderColor); // Down
+    }
+}
+
+//----------------------------------------------
+
+
+
+//----------------------------------------------
+//float fillColor[] = { 1.0, 0.0, 0.0 };
+bool visited[200][200];
+
+float fillColor[] = { 1.0, 0.0, 0.0 }; // Red
+
+// Function to set the color of a pixel
+void setPixel(int x, int y, float color[]) {
+    glPointSize(1.0);
+    glBegin(GL_POINTS);
+    glColor3fv(color);
+    glVertex2i(x, y);
+    glEnd();
+    glFlush();
+}
+
+// Recursive-like boundary fill algorithm
+void boundaryFill(int x, int y, float fillColor[], float borderColor[]) {
+    float currentColor[3];
+    glReadPixels(x, y, 1, 1, GL_RGB, GL_FLOAT, currentColor);
+    if (visited[x+ 99][y+99] == true)
+    {
+        return;
+    }
+
+    if ((currentColor[0] != borderColor[0] || currentColor[1] != borderColor[1] || currentColor[2] != borderColor[2]) &&
+        (currentColor[0] != fillColor[0] || currentColor[1] != fillColor[1] || currentColor[2] != fillColor[2])) {
+
+        setPixel(x, y, fillColor);
+        visited[x+ 99][y+99] = true;
+        boundaryFill(x + 1, y, fillColor, borderColor); // Right
+        boundaryFill(x - 1, y, fillColor, borderColor); // Left
+        boundaryFill(x, y + 1, fillColor, borderColor); // Up
+        boundaryFill(x, y - 1, fillColor, borderColor); // Down
+    }
+}
+
+
+//_______________________________________________________
+
+const int WIDTH = 800;
+const int HEIGHT = 600;
+
+//bool visited[WIDTH][HEIGHT];
+
+void init() {
+    glClearColor(1.0, 1.0, 1.0, 1.0);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+   // gluOrtho2D(0, WIDTH, 0, HEIGHT);
+}
+
+void drawPixel(int x, int y) {
+    glBegin(GL_POINTS);
+    glVertex2i(x, y);
+    glEnd();
+    glFlush();
+}
+
+void floodFill(int x, int y, float fillColor[3], float interiorColor[3]) {
+    if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT)
+        return;
+
+    if (visited[x][y])
+        return;
+
+    float pixelColor[3];
+    glReadPixels(x, y, 1, 1, GL_RGB, GL_FLOAT, pixelColor);
+
+    if (pixelColor[0] != interiorColor[0] ||
+        pixelColor[1] != interiorColor[1] ||
+        pixelColor[2] != interiorColor[2])
+        return;
+
+    visited[x][y] = true;
+    drawPixel(x, y);
+
+    floodFill(x + 1, y, fillColor, interiorColor);
+    floodFill(x - 1, y, fillColor, interiorColor);
+    floodFill(x, y + 1, fillColor, interiorColor);
+    floodFill(x, y - 1, fillColor, interiorColor);
+}
+
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glColor3f(0.0, 0.0, 0.0);
+    glBegin(GL_LINE_LOOP);
+    glVertex2i(100, 100);
+    glVertex2i(150, 100);
+    glVertex2i(150, 150);
+    glVertex2i(100, 150);
+    glEnd();
+    glFlush();
+
+    float fillColor[] = { 0.0, 1.0, 0.0 }; // Green fill color
+    float interiorColor[] = { 1.0, 1.0, 1.0 }; // White interior color
+
+    floodFill(101, 101, fillColor, interiorColor);
+
+    glFlush();
+}
+
+//int main(int argc, char** argv) {
+//    glutInit(&argc, argv);
+//    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+//    glutInitWindowSize(WIDTH, HEIGHT);
+//    glutCreateWindow("Flood Fill Algorithm in OpenGL");
+//    init();
+//    glutDisplayFunc(display);
+//    glutMainLoop();
+//    return 0;
+//}
+
+
+
+//void LiangBarskey(int x1,int y1, int x2, int y2, int x_win_min, int y_win_max, int x_win_max, int y_win_min)
+//{   
+//   /* int t = 1;
+//    int x_param = x1 + (t * (x2 - x1));
+//    int y_param = y1 + (t * (y2 - y1));*/
+//
+//    int delta_x = x2 - x1;
+//    int delta_y = y2 - y1;
+//
+//    int p1 = -delta_x;
+//    int p2 = delta_x;
+//    int p3 = -delta_y;
+//    int p4 = delta_y;
+//
+//    int q1 = x1 - x_win_min;
+//    int q2 = x_win_max - x1;
+//    int q3 = y1 - y_win_min;
+//    int q4 = y_win_max - y1;
+//
+//    int r1 = q1 / p1;
+//    int r2 = q2 / p2;
+//    int r3 = q3 / p3;
+//    int r4 = q4 / q4;
+//
+//}
+
+
+
+// this function gives the maximum
+float maxi(float arr[], int n) {
+    float m = 0;
+    for (int i = 0; i < n; ++i)
+        if (m < arr[i])
+            m = arr[i];
+    return m;
+}
+
+// this function gives the minimum
+float mini(float arr[], int n) {
+    float m = 1;
+    for (int i = 0; i < n; ++i)
+        if (m > arr[i])
+            m = arr[i];
+    return m;
+}
+
+void liang_barsky_clipper(float xmin, float ymin, float xmax, float ymax,
+    float x1, float y1, float x2, float y2) {
+    // defining variables
+    float p1 = -(x2 - x1);
+    float p2 = -p1;
+    float p3 = -(y2 - y1);
+    float p4 = -p3;
+
+    float q1 = x1 - xmin;
+    float q2 = xmax - x1;
+    float q3 = y1 - ymin;
+    float q4 = ymax - y1;
+
+    float posarr[5], negarr[5];
+    int posind = 1, negind = 1;
+    posarr[0] = 1;
+    negarr[0] = 0;
+
+ 
+
+    glVertex2f(xmin/1000, ymin/1000);
+    glVertex2f(xmin/1000, ymax/1000);
+
+    glVertex2f(xmin/1000, ymax/1000);
+    glVertex2f(xmax/1000, ymax/1000);
+
+    glVertex2f(xmax/1000, ymax/1000);
+    glVertex2f(xmax/1000, ymin/1000);
+
+    glVertex2f(xmax/1000, ymin/1000);
+    glVertex2f(xmin/1000, ymin/1000);
+
+  
+    //rectangle(xmin, ymin, xmax, ymax); // drawing the clipping window
+
+    if ((p1 == 0 && q1 < 0) || (p2 == 0 && q2 < 0) || (p3 == 0 && q3 < 0) || (p4 == 0 && q4 < 0)) {
+        cout << "line parrl  to win";
+        return;
+    }
+    if (p1 != 0) {
+        float r1 = q1 / p1;
+        float r2 = q2 / p2;
+        if (p1 < 0) {
+            negarr[negind++] = r1; // for negative p1, add it to negative array
+            posarr[posind++] = r2; // and add p2 to positive array
+        }
+        else {
+            negarr[negind++] = r2;
+            posarr[posind++] = r1;
+        }
+    }
+    if (p3 != 0) {
+        float r3 = q3 / p3;
+        float r4 = q4 / p4;
+        if (p3 < 0) {
+            negarr[negind++] = r3;
+            posarr[posind++] = r4;
+        }
+        else {
+            negarr[negind++] = r4;
+            posarr[posind++] = r3;
+        }
+    }
+
+    float xn1, yn1, xn2, yn2;
+    float rn1, rn2;
+    rn1 = maxi(negarr, negind); // maximum of negative array
+    rn2 = mini(posarr, posind); // minimum of positive array
+
+    if (rn1 > rn2) { // reject
+      //  outtextxy(80, 80, "Line is outside the clipping window!");
+        return;
+    }
+
+    xn1 = x1 + p2 * rn1;
+    yn1 = y1 + p4 * rn1; // computing new points
+
+    xn2 = x1 + p2 * rn2;
+    yn2 = y1 + p4 * rn2;
+   
+    glVertex2f(xn1/1000, yn1/1000);
+    glVertex2f(xn2/1000, yn2/1000); // the drawing the new line
+
+    glColor3f(0.0, 1.0, 1.0);;
+
+  
+
+    glVertex2f(x1/1000, y1/1000);
+    glVertex2f(xn1/1000, yn1/1000);
+  
+
+    glVertex2f(x2/1000, y2/1000);
+    glVertex2f(xn2/1000, yn2/1000);
+    
+}
+
+void scaling(float x1,float y1, float x2, float y2, float X_scale, float y_scale)
+{
+    //cli input for rectangle sides and transform
+    //switch canse for all
+    glClear(GL_COLOR_BUFFER_BIT);
+    glColor3f(1.0, 0.0, 0.0);
+    glBegin(GL_LINES);
+
+    glVertex2f(x1 / 1000, y1 / 1000);
+    glVertex2f(x2 / 1000, y1 / 1000);
+
+    glVertex2f(x2 / 1000, y1 / 1000);
+    glVertex2f(x2 / 1000, y2 / 1000);
+
+    glVertex2f(x2 / 1000, y2 / 1000);
+    glVertex2f(x1 / 1000, y2 / 1000);
+
+    glVertex2f(x1 / 1000, y2 / 1000);
+    glVertex2f(x1 / 1000, y1 / 1000);
+
+   
+
+
+    float matrix[4][3] = { {x1,y1,1},{x2,y1,1},{x2,y2,1},{x1,y2,1} };
+
+    float scaling[3][3] = { {X_scale,0,0},{0,y_scale,0},{0,0,1}};
+
+    float temp[4][3] = { 0 };
+
+    for (int i = 0; i < 4; ++i)
+        for (int j = 0; j < 3; ++j)
+            for (int k = 0; k < 3; ++k)
+            {
+                temp[i][j] += matrix[i][k] * scaling[k][j];
+            }
+    x1 = temp[0][0];
+    y1 = temp[0][1];
+
+    x2 = temp[1][0];
+    y2 = temp[2][1];
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    glColor3f(0.0, 1.0, 0.0);
+    
+
+    glVertex2f(x1 / 1000, y1 / 1000);
+    glVertex2f(x2 / 1000, y1 / 1000);
+
+    glVertex2f(x2 / 1000, y1 / 1000);
+    glVertex2f(x2 / 1000, y2 / 1000);
+
+    glVertex2f(x2 / 1000, y2 / 1000);
+    glVertex2f(x1 / 1000, y2 / 1000);
+
+    glVertex2f(x1 / 1000, y2 / 1000);
+    glVertex2f(x1 / 1000, y1 / 1000);
+
+    glEnd();
+
+}
+
+void translation(float x1, float y1, float x2, float y2, float X_tran, float y_tran)
+{
+    //cli input for rectangle sides and transform
+    //switch canse for all
+    glClear(GL_COLOR_BUFFER_BIT);
+    glColor3f(1.0, 0.0, 0.0);
+    glBegin(GL_LINES);
+
+    glVertex2f(x1 / 1000, y1 / 1000);
+    glVertex2f(x2 / 1000, y1 / 1000);
+
+    glVertex2f(x2 / 1000, y1 / 1000);
+    glVertex2f(x2 / 1000, y2 / 1000);
+
+    glVertex2f(x2 / 1000, y2 / 1000);
+    glVertex2f(x1 / 1000, y2 / 1000);
+
+    glVertex2f(x1 / 1000, y2 / 1000);
+    glVertex2f(x1 / 1000, y1 / 1000);
+
+
+
+
+    float matrix[4][3] = { {x1,y1,1},{x2,y1,1},{x2,y2,1},{x1,y2,1} };
+
+    float scaling[3][3] = { {1,0,0},{0,1,0},{X_tran, y_tran, 1} };
+
+    float temp[4][3] = { 0 };
+
+    for (int i = 0; i < 4; ++i)
+        for (int j = 0; j < 3; ++j)
+            for (int k = 0; k < 3; ++k)
+            {
+                temp[i][j] += matrix[i][k] * scaling[k][j];
+            }
+    x1 = temp[0][0];
+    y1 = temp[0][1];
+
+    x2 = temp[1][0];
+    y2 = temp[2][1];
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    glColor3f(0.0, 1.0, 0.0);
+
+
+    glVertex2f(x1 / 1000, y1 / 1000);
+    glVertex2f(x2 / 1000, y1 / 1000);
+
+    glVertex2f(x2 / 1000, y1 / 1000);
+    glVertex2f(x2 / 1000, y2 / 1000);
+
+    glVertex2f(x2 / 1000, y2 / 1000);
+    glVertex2f(x1 / 1000, y2 / 1000);
+
+    glVertex2f(x1 / 1000, y2 / 1000);
+    glVertex2f(x1 / 1000, y1 / 1000);
+
+    glEnd();
+
+}
+
+void rotation(float x1, float y1, float x2, float y2, float theta)
+{
+    //cli input for rectangle sides and transform
+    //switch canse for all
+    glClear(GL_COLOR_BUFFER_BIT);
+    glColor3f(1.0, 0.0, 0.0);
+    glBegin(GL_LINES);
+
+    glVertex2f(x1 / 1000, y1 / 1000);
+    glVertex2f(x2 / 1000, y1 / 1000);
+
+    glVertex2f(x2 / 1000, y1 / 1000);
+    glVertex2f(x2 / 1000, y2 / 1000);
+
+    glVertex2f(x2 / 1000, y2 / 1000);
+    glVertex2f(x1 / 1000, y2 / 1000);
+
+    glVertex2f(x1 / 1000, y2 / 1000);
+    glVertex2f(x1 / 1000, y1 / 1000);
+
+
+    float radian = theta * 3.14159 / 180;
+
+    float matrix[4][3] = { {x1,y1,1},{x2,y1,1},{x2,y2,1},{x1,y2,1} };
+
+    float scaling[3][3] = { {cos(radian),-sin(radian),0},{sin(radian), cos(radian),0},{0, 0, 1}};
+
+    float temp[4][3] = { 0 };
+
+    for (int i = 0; i < 4; i++)
+        for (int j = 0; j < 3; j++)
+            for (int k = 0; k < 3; k++)
+            {
+                temp[i][j] += matrix[i][k] * scaling[k][j];
+            }
+    /*x1 = temp[0][0];
+    y1 = temp[0][1];
+
+    x2 = temp[1][0];
+    y2 = temp[2][1];*/
+
+    x1 = temp[0][0];
+    y1 = temp[0][1];
+
+    x2 = temp[1][0];
+    y2 = temp[2][1];
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    glColor3f(0.0, 1.0, 0.0);
+
+
+    glVertex2f(temp[0][0] / 1000, temp[0][1] / 1000);
+    glVertex2f(temp[1][0] / 1000, temp[1][1] / 1000);
+
+    glVertex2f(temp[1][0] / 1000, temp[1][1] / 1000);
+    glVertex2f(temp[2][0] / 1000, temp[2][1] / 1000);
+
+    glVertex2f(temp[2][0] / 1000, temp[2][1] / 1000);
+    glVertex2f(temp[3][0] / 1000, temp[3][1] / 1000);
+
+    glVertex2f(temp[3][0] / 1000, temp[3][1] / 1000);
+    glVertex2f(temp[0][0] / 1000, temp[0][1] / 1000);
+
+    glEnd();
+
+
+
+    void rotation(float x1, float y1, float x2, float y2, float theta)
+{
+    //cli input for rectangle sides and transform
+    //switch canse for all
+    glClear(GL_COLOR_BUFFER_BIT);
+    glColor3f(1.0, 0.0, 0.0);
+    glBegin(GL_LINES);
+
+    glVertex2f(x1 / 1000, y1 / 1000);
+    glVertex2f(x2 / 1000, y1 / 1000);
+
+    glVertex2f(x2 / 1000, y1 / 1000);
+    glVertex2f(x2 / 1000, y2 / 1000);
+
+    glVertex2f(x2 / 1000, y2 / 1000);
+    glVertex2f(x1 / 1000, y2 / 1000);
+
+    glVertex2f(x1 / 1000, y2 / 1000);
+    glVertex2f(x1 / 1000, y1 / 1000);
+
+
+    float radian = theta * 3.14159 / 180;
+
+    float matrix[4][3] = { {x1,y1,1},{x2,y1,1},{x2,y2,1},{x1,y2,1} };
+
+    float scaling[3][3] = { {cos(radian),-sin(radian),0},{sin(radian), cos(radian),0},{0, 0, 1}};
+
+    float temp[4][3] = { 0 };
+
+    for (int i = 0; i < 4; i++)
+        for (int j = 0; j < 3; j++)
+            for (int k = 0; k < 3; k++)
+            {
+                temp[i][j] += matrix[i][k] * scaling[k][j];
+            }
+    /*x1 = temp[0][0];
+    y1 = temp[0][1];
+
+    x2 = temp[1][0];
+    y2 = temp[2][1];*/
+
+    x1 = temp[0][0];
+    y1 = temp[0][1];
+
+    x2 = temp[1][0];
+    y2 = temp[2][1];
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    glColor3f(0.0, 1.0, 0.0);
+
+
+    glVertex2f(temp[0][0] / 1000, temp[0][1] / 1000);
+    glVertex2f(temp[1][0] / 1000, temp[1][1] / 1000);
+
+    glVertex2f(temp[1][0] / 1000, temp[1][1] / 1000);
+    glVertex2f(temp[2][0] / 1000, temp[2][1] / 1000);
+
+    glVertex2f(temp[2][0] / 1000, temp[2][1] / 1000);
+    glVertex2f(temp[3][0] / 1000, temp[3][1] / 1000);
+
+    glVertex2f(temp[3][0] / 1000, temp[3][1] / 1000);
+    glVertex2f(temp[0][0] / 1000, temp[0][1] / 1000);
+
+    glEnd();
+
+}
+
+    void X_sheering(float x1, float y1, float x2, float y2, int x_sheer)
+    {
+        //cli input for rectangle sides and transform
+        //switch canse for all
+        glClear(GL_COLOR_BUFFER_BIT);
+        glColor3f(1.0, 0.0, 0.0);
+        glBegin(GL_LINES);
+
+        glVertex2f(x1 / 1000, y1 / 1000);
+        glVertex2f(x2 / 1000, y1 / 1000);
+
+        glVertex2f(x2 / 1000, y1 / 1000);
+        glVertex2f(x2 / 1000, y2 / 1000);
+
+        glVertex2f(x2 / 1000, y2 / 1000);
+        glVertex2f(x1 / 1000, y2 / 1000);
+
+        glVertex2f(x1 / 1000, y2 / 1000);
+        glVertex2f(x1 / 1000, y1 / 1000);
+
+
+     
+
+        float matrix[4][3] = { {x1,y1,1},{x2,y1,1},{x2,y2,1},{x1,y2,1} };
+
+        float scaling[3][3] = { {1,x_sheer,0},{0, 1,0}, {0, 0, 1} };
+
+        float temp[4][3] = { 0 };
+
+        for (int i = 0; i < 4; i++)
+            for (int j = 0; j < 3; j++)
+                for (int k = 0; k < 3; k++)
+                {
+                    temp[i][j] += matrix[i][k] * scaling[k][j];
+                }
+
+        x1 = temp[0][0];
+        y1 = temp[0][1];
+
+        x2 = temp[1][0];
+        y2 = temp[2][1];
+
+        glClear(GL_COLOR_BUFFER_BIT);
+        glColor3f(0.0, 1.0, 0.0);
+
+
+        glVertex2f(temp[0][0] / 1000, temp[0][1] / 1000);
+        glVertex2f(temp[1][0] / 1000, temp[1][1] / 1000);
+
+        glVertex2f(temp[1][0] / 1000, temp[1][1] / 1000);
+        glVertex2f(temp[2][0] / 1000, temp[2][1] / 1000);
+
+        glVertex2f(temp[2][0] / 1000, temp[2][1] / 1000);
+        glVertex2f(temp[3][0] / 1000, temp[3][1] / 1000);
+
+        glVertex2f(temp[3][0] / 1000, temp[3][1] / 1000);
+        glVertex2f(temp[0][0] / 1000, temp[0][1] / 1000);
+
+        glEnd();
+
+    }
+
+    void Y_sheering(float x1, float y1, float x2, float y2, int y_sheer)
+    {
+        //cli input for rectangle sides and transform
+        //switch canse for all
+        glClear(GL_COLOR_BUFFER_BIT);
+        glColor3f(1.0, 0.0, 0.0);
+        glBegin(GL_LINES);
+
+        glVertex2f(x1 / 1000, y1 / 1000);
+        glVertex2f(x2 / 1000, y1 / 1000);
+
+        glVertex2f(x2 / 1000, y1 / 1000);
+        glVertex2f(x2 / 1000, y2 / 1000);
+
+        glVertex2f(x2 / 1000, y2 / 1000);
+        glVertex2f(x1 / 1000, y2 / 1000);
+
+        glVertex2f(x1 / 1000, y2 / 1000);
+        glVertex2f(x1 / 1000, y1 / 1000);
+
+
+
+
+        float matrix[4][3] = { {x1,y1,1},{x2,y1,1},{x2,y2,1},{x1,y2,1} };
+
+        float scaling[3][3] = { {1,0,0},{y_sheer, 1,0}, {0, 0, 1} };
+
+        float temp[4][3] = { 0 };
+
+        for (int i = 0; i < 4; i++)
+            for (int j = 0; j < 3; j++)
+                for (int k = 0; k < 3; k++)
+                {
+                    temp[i][j] += matrix[i][k] * scaling[k][j];
+                }
+
+        x1 = temp[0][0];
+        y1 = temp[0][1];
+
+        x2 = temp[1][0];
+        y2 = temp[2][1];
+
+        glClear(GL_COLOR_BUFFER_BIT);
+        glColor3f(0.0, 1.0, 0.0);
+
+
+        glVertex2f(temp[0][0] / 1000, temp[0][1] / 1000);
+        glVertex2f(temp[1][0] / 1000, temp[1][1] / 1000);
+
+        glVertex2f(temp[1][0] / 1000, temp[1][1] / 1000);
+        glVertex2f(temp[2][0] / 1000, temp[2][1] / 1000);
+
+        glVertex2f(temp[2][0] / 1000, temp[2][1] / 1000);
+        glVertex2f(temp[3][0] / 1000, temp[3][1] / 1000);
+
+        glVertex2f(temp[3][0] / 1000, temp[3][1] / 1000);
+        glVertex2f(temp[0][0] / 1000, temp[0][1] / 1000);
+
+        glEnd();
+
+    }
+
+
+
 int main()
 {
     GLFWwindow* window;
@@ -580,7 +1241,7 @@ int main()
         return -1;
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(1000, 1000, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(1000, 1000, "dotnet meow", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -599,34 +1260,35 @@ int main()
 
 
     /* Loop until the user closes the window */
-   while (!glfwWindowShouldClose(window)){
+    while (!glfwWindowShouldClose(window)) {
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
+        glColor3f(1.0, 0.0, 0.0);
+        glBegin(GL_LINES);
        
-        int raduius, xc,yc;
-        cout << "enter x-centre, y-centre and radius for midpoint circple\n";
-        cin >> xc >> yc >> raduius;
-    
+   
 
-        glBegin(GL_POINTS);
-        midPointCircleDraw(xc, yc ,raduius);
        
+     
+      
+      
+
+        //liang_barsky_clipper(-100,-100,200,200, -330,-450, 250, 250);
         glEnd();
-        //house();
 
-
+        rotation(300,100, 500,200, -60);
+        //translation(0, 0, 300, 300, 100, 100);
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
 
         /* Poll for and process events */
         glfwPollEvents();
-   }
-   //     int q;
-     //   cin >> q;
+        cout << "udf";
+    }
+    //     int q;
+      //   cin >> q;
     glfwTerminate();
-    return 0;
     
+    return 0;
+
 }
-
-
-
