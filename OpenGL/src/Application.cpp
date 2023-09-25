@@ -972,71 +972,71 @@ void translation(float x1, float y1, float x2, float y2, float X_tran, float y_t
 
 }
 
-void rotation(float x1, float y1, float x2, float y2, float theta)
-{
-    //cli input for rectangle sides and transform
-    //switch canse for all
-    glClear(GL_COLOR_BUFFER_BIT);
-    glColor3f(1.0, 0.0, 0.0);
-    glBegin(GL_LINES);
-
-    glVertex2f(x1 / 1000, y1 / 1000);
-    glVertex2f(x2 / 1000, y1 / 1000);
-
-    glVertex2f(x2 / 1000, y1 / 1000);
-    glVertex2f(x2 / 1000, y2 / 1000);
-
-    glVertex2f(x2 / 1000, y2 / 1000);
-    glVertex2f(x1 / 1000, y2 / 1000);
-
-    glVertex2f(x1 / 1000, y2 / 1000);
-    glVertex2f(x1 / 1000, y1 / 1000);
-
-
-    float radian = theta * 3.14159 / 180;
-
-    float matrix[4][3] = { {x1,y1,1},{x2,y1,1},{x2,y2,1},{x1,y2,1} };
-
-    float scaling[3][3] = { {cos(radian),-sin(radian),0},{sin(radian), cos(radian),0},{0, 0, 1}};
-
-    float temp[4][3] = { 0 };
-
-    for (int i = 0; i < 4; i++)
-        for (int j = 0; j < 3; j++)
-            for (int k = 0; k < 3; k++)
-            {
-                temp[i][j] += matrix[i][k] * scaling[k][j];
-            }
-    /*x1 = temp[0][0];
-    y1 = temp[0][1];
-
-    x2 = temp[1][0];
-    y2 = temp[2][1];*/
-
-    x1 = temp[0][0];
-    y1 = temp[0][1];
-
-    x2 = temp[1][0];
-    y2 = temp[2][1];
-
-    glClear(GL_COLOR_BUFFER_BIT);
-    glColor3f(0.0, 1.0, 0.0);
-
-
-    glVertex2f(temp[0][0] / 1000, temp[0][1] / 1000);
-    glVertex2f(temp[1][0] / 1000, temp[1][1] / 1000);
-
-    glVertex2f(temp[1][0] / 1000, temp[1][1] / 1000);
-    glVertex2f(temp[2][0] / 1000, temp[2][1] / 1000);
-
-    glVertex2f(temp[2][0] / 1000, temp[2][1] / 1000);
-    glVertex2f(temp[3][0] / 1000, temp[3][1] / 1000);
-
-    glVertex2f(temp[3][0] / 1000, temp[3][1] / 1000);
-    glVertex2f(temp[0][0] / 1000, temp[0][1] / 1000);
-
-    glEnd();
-
+//void rotation(float x1, float y1, float x2, float y2, float theta)
+//{
+//    //cli input for rectangle sides and transform
+//    //switch canse for all
+//    glClear(GL_COLOR_BUFFER_BIT);
+//    glColor3f(1.0, 0.0, 0.0);
+//    glBegin(GL_LINES);
+//
+//    glVertex2f(x1 / 1000, y1 / 1000);
+//    glVertex2f(x2 / 1000, y1 / 1000);
+//
+//    glVertex2f(x2 / 1000, y1 / 1000);
+//    glVertex2f(x2 / 1000, y2 / 1000);
+//
+//    glVertex2f(x2 / 1000, y2 / 1000);
+//    glVertex2f(x1 / 1000, y2 / 1000);
+//
+//    glVertex2f(x1 / 1000, y2 / 1000);
+//    glVertex2f(x1 / 1000, y1 / 1000);
+//
+//
+//    float radian = theta * 3.14159 / 180;
+//
+//    float matrix[4][3] = { {x1,y1,1},{x2,y1,1},{x2,y2,1},{x1,y2,1} };
+//
+//    float scaling[3][3] = { {cos(radian),-sin(radian),0},{sin(radian), cos(radian),0},{0, 0, 1} };
+//
+//    float temp[4][3] = { 0 };
+//
+//    for (int i = 0; i < 4; i++)
+//        for (int j = 0; j < 3; j++)
+//            for (int k = 0; k < 3; k++)
+//            {
+//                temp[i][j] += matrix[i][k] * scaling[k][j];
+//            }
+//    /*x1 = temp[0][0];
+//    y1 = temp[0][1];
+//
+//    x2 = temp[1][0];
+//    y2 = temp[2][1];*/
+//
+//    x1 = temp[0][0];
+//    y1 = temp[0][1];
+//
+//    x2 = temp[1][0];
+//    y2 = temp[2][1];
+//
+//    glClear(GL_COLOR_BUFFER_BIT);
+//    glColor3f(0.0, 1.0, 0.0);
+//
+//
+//    glVertex2f(temp[0][0] / 1000, temp[0][1] / 1000);
+//    glVertex2f(temp[1][0] / 1000, temp[1][1] / 1000);
+//
+//    glVertex2f(temp[1][0] / 1000, temp[1][1] / 1000);
+//    glVertex2f(temp[2][0] / 1000, temp[2][1] / 1000);
+//
+//    glVertex2f(temp[2][0] / 1000, temp[2][1] / 1000);
+//    glVertex2f(temp[3][0] / 1000, temp[3][1] / 1000);
+//
+//    glVertex2f(temp[3][0] / 1000, temp[3][1] / 1000);
+//    glVertex2f(temp[0][0] / 1000, temp[0][1] / 1000);
+//
+//    glEnd();
+//}
 
 
     void rotation(float x1, float y1, float x2, float y2, float theta)
@@ -1231,6 +1231,593 @@ void rotation(float x1, float y1, float x2, float y2, float theta)
     }
 //_____________________________________________________________________________________
 
+    void translation_3d(float p1[3], float p2[3], float p3[3], float p4[3], float X_tran, float y_tran, float z_tran)
+    {
+        //cli input for rectangle sides and transform
+        //switch canse for all
+        glClear(GL_COLOR_BUFFER_BIT);
+        glColor3f(1.0, 0.0, 0.0);
+        glBegin(GL_LINES);
+
+        glVertex3f(p1[0] / 1000, p1[1] / 1000, p1[2]/1000);
+        glVertex3f(p2[0] / 1000, p2[1] / 1000, p2[2] / 1000);
+
+        glVertex3f(p2[0] / 1000, p2[1] / 1000, p2[2] / 1000);
+        glVertex3f(p3[0] / 1000, p3[1] / 1000, p3[2] / 1000);
+
+        glVertex3f(p3[0] / 1000, p3[1] / 1000, p3[2] / 1000);
+        glVertex3f(p4[0] / 1000, p4[1] / 1000, p4[2] / 1000);
+
+        glVertex3f(p4[0] / 1000, p4[1] / 1000, p4[2] / 1000);
+        glVertex3f(p1[0] / 1000, p1[1] / 1000, p1[2] / 1000);
+
+        glVertex3f(p1[0] / 1000, p1[1] / 1000, p1[2] / 1000);
+        glVertex3f(p3[0] / 1000, p3[1] / 1000, p3[2] / 1000);
+
+        glVertex3f(p4[0] / 1000, p4[1] / 1000, p4[2] / 1000);
+        glVertex3f(p2[0] / 1000, p2[1] / 1000, p2[2] / 1000);
+       // glEnd();
+
+
+       float matrix[4][4] = { 0 };
+
+        float scaling[4][4] = { {1,0,0, 0},{0,1,0, 0},{0,0,1, 0},{X_tran, y_tran, z_tran, 1} };
+
+        float temp[4][4] = { {p1[0],p1[1],p1[2], 1},{p2[0],p2[1],p2[2], 1},{p3[0],p3[1],p3[2], 1},{p4[0],p4[1],p4[2], 1} };
+       
+       
+
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                for (int k = 0; k < 4; k++) {
+                    matrix[i][j] += temp[i][k] * scaling[k][j];
+                }
+            }
+        }
+
+       
+
+        glClear(GL_COLOR_BUFFER_BIT);
+        glColor3f(0.0, 1.0, 0.0);
+        glBegin(GL_LINES);
+
+        glVertex3f(matrix[0][0] / 1000, matrix[0][1] / 1000, matrix[0][2] / 1000);
+        glVertex3f(matrix[1][0] / 1000, matrix[1][1] / 1000, matrix[1][2] / 1000);
+
+        glVertex3f(matrix[1][0] / 1000, matrix[1][1] / 1000, matrix[1][2] / 1000);
+        glVertex3f(matrix[2][0] / 1000, matrix[2][1] / 1000, matrix[2][2] / 1000);
+
+        glVertex3f(matrix[2][0] / 1000, matrix[2][1] / 1000, matrix[2][2] / 1000);
+        glVertex3f(matrix[3][0] / 1000, matrix[3][1] / 1000, matrix[3][2] / 1000);
+
+        glVertex3f(matrix[3][0] / 1000, matrix[3][1] / 1000, matrix[3][2] / 1000);
+        glVertex3f(matrix[0][0] / 1000, matrix[0][1] / 1000, matrix[0][2] / 1000);
+
+        glVertex3f(matrix[0][0] / 1000, matrix[0][1] / 1000, matrix[0][2] / 1000);
+        glVertex3f(matrix[2][0] / 1000, matrix[2][1] / 1000, matrix[2][2] / 1000);
+
+        glVertex3f(matrix[3][0] / 1000, matrix[3][1] / 1000, matrix[3][2] / 1000);
+        glVertex3f(matrix[1][0] / 1000, matrix[1][1] / 1000, matrix[1][2] / 1000);
+        glEnd();
+
+    }
+  
+
+    //_____________________________________________________________________________________
+
+    void scaling_3d(float p1[3], float p2[3], float p3[3], float p4[3], float X_scal, float y_scal, float z_scal)
+    {
+        //cli input for rectangle sides and transform
+        //switch canse for all
+        glClear(GL_COLOR_BUFFER_BIT);
+        glColor3f(1.0, 0.0, 0.0);
+        glBegin(GL_LINES);
+
+        glVertex3f(p1[0] / 1000, p1[1] / 1000, p1[2] / 1000);
+        glVertex3f(p2[0] / 1000, p2[1] / 1000, p2[2] / 1000);
+
+        glVertex3f(p2[0] / 1000, p2[1] / 1000, p2[2] / 1000);
+        glVertex3f(p3[0] / 1000, p3[1] / 1000, p3[2] / 1000);
+
+        glVertex3f(p3[0] / 1000, p3[1] / 1000, p3[2] / 1000);
+        glVertex3f(p4[0] / 1000, p4[1] / 1000, p4[2] / 1000);
+
+        glVertex3f(p4[0] / 1000, p4[1] / 1000, p4[2] / 1000);
+        glVertex3f(p1[0] / 1000, p1[1] / 1000, p1[2] / 1000);
+
+        glVertex3f(p1[0] / 1000, p1[1] / 1000, p1[2] / 1000);
+        glVertex3f(p3[0] / 1000, p3[1] / 1000, p3[2] / 1000);
+
+        glVertex3f(p4[0] / 1000, p4[1] / 1000, p4[2] / 1000);
+        glVertex3f(p2[0] / 1000, p2[1] / 1000, p2[2] / 1000);
+        // glEnd();
+
+
+        float matrix[4][4] = { 0 };
+
+        float scaling[4][4] = { {X_scal,0,0, 0},{0,y_scal,0, 0},{0,0,z_scal, 0},{0,0,0, 1} };
+
+        float temp[4][4] = { {p1[0],p1[1],p1[2], 1},{p2[0],p2[1],p2[2], 1},{p3[0],p3[1],p3[2], 1},{p4[0],p4[1],p4[2], 1} };
+
+
+
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                for (int k = 0; k < 4; k++) {
+                    matrix[i][j] += temp[i][k] * scaling[k][j];
+                }
+            }
+        }
+
+
+
+        glClear(GL_COLOR_BUFFER_BIT);
+        glColor3f(0.0, 1.0, 0.0);
+        glBegin(GL_LINES);
+
+        glVertex3f(matrix[0][0] / 1000, matrix[0][1] / 1000, matrix[0][2] / 1000);
+        glVertex3f(matrix[1][0] / 1000, matrix[1][1] / 1000, matrix[1][2] / 1000);
+
+        glVertex3f(matrix[1][0] / 1000, matrix[1][1] / 1000, matrix[1][2] / 1000);
+        glVertex3f(matrix[2][0] / 1000, matrix[2][1] / 1000, matrix[2][2] / 1000);
+
+        glVertex3f(matrix[2][0] / 1000, matrix[2][1] / 1000, matrix[2][2] / 1000);
+        glVertex3f(matrix[3][0] / 1000, matrix[3][1] / 1000, matrix[3][2] / 1000);
+
+        glVertex3f(matrix[3][0] / 1000, matrix[3][1] / 1000, matrix[3][2] / 1000);
+        glVertex3f(matrix[0][0] / 1000, matrix[0][1] / 1000, matrix[0][2] / 1000);
+
+        glVertex3f(matrix[0][0] / 1000, matrix[0][1] / 1000, matrix[0][2] / 1000);
+        glVertex3f(matrix[2][0] / 1000, matrix[2][1] / 1000, matrix[2][2] / 1000);
+
+        glVertex3f(matrix[3][0] / 1000, matrix[3][1] / 1000, matrix[3][2] / 1000);
+        glVertex3f(matrix[1][0] / 1000, matrix[1][1] / 1000, matrix[1][2] / 1000);
+        glEnd();
+
+    }
+
+    //_____________________________________________________________________________________
+
+    void X_sheer_3d(float p1[3], float p2[3], float p3[3], float p4[3], float y_sheer, float z_sheer)
+    {
+        //cli input for rectangle sides and transform
+        //switch canse for all
+        glClear(GL_COLOR_BUFFER_BIT);
+        glColor3f(1.0, 0.0, 0.0);
+        glBegin(GL_LINES);
+
+        glVertex3f(p1[0] / 1000, p1[1] / 1000, p1[2] / 1000);
+        glVertex3f(p2[0] / 1000, p2[1] / 1000, p2[2] / 1000);
+
+        glVertex3f(p2[0] / 1000, p2[1] / 1000, p2[2] / 1000);
+        glVertex3f(p3[0] / 1000, p3[1] / 1000, p3[2] / 1000);
+
+        glVertex3f(p3[0] / 1000, p3[1] / 1000, p3[2] / 1000);
+        glVertex3f(p4[0] / 1000, p4[1] / 1000, p4[2] / 1000);
+
+        glVertex3f(p4[0] / 1000, p4[1] / 1000, p4[2] / 1000);
+        glVertex3f(p1[0] / 1000, p1[1] / 1000, p1[2] / 1000);
+
+        glVertex3f(p1[0] / 1000, p1[1] / 1000, p1[2] / 1000);
+        glVertex3f(p3[0] / 1000, p3[1] / 1000, p3[2] / 1000);
+
+        glVertex3f(p4[0] / 1000, p4[1] / 1000, p4[2] / 1000);
+        glVertex3f(p2[0] / 1000, p2[1] / 1000, p2[2] / 1000);
+        // glEnd();
+
+
+        float matrix[4][4] = { 0 };
+
+        float scaling[4][4] = { {1,y_sheer,z_sheer, 0},{0,1,0, 0},{0,0,1, 0},{0,0,0, 1} };
+
+        float temp[4][4] = { {p1[0],p1[1],p1[2], 1},{p2[0],p2[1],p2[2], 1},{p3[0],p3[1],p3[2], 1},{p4[0],p4[1],p4[2], 1} };
+
+
+
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                for (int k = 0; k < 4; k++) {
+                    matrix[i][j] += temp[i][k] * scaling[k][j];
+                }
+            }
+        }
+
+
+
+        glClear(GL_COLOR_BUFFER_BIT);
+        glColor3f(0.0, 1.0, 0.0);
+        glBegin(GL_LINES);
+
+        glVertex3f(matrix[0][0] / 1000, matrix[0][1] / 1000, matrix[0][2] / 1000);
+        glVertex3f(matrix[1][0] / 1000, matrix[1][1] / 1000, matrix[1][2] / 1000);
+
+        glVertex3f(matrix[1][0] / 1000, matrix[1][1] / 1000, matrix[1][2] / 1000);
+        glVertex3f(matrix[2][0] / 1000, matrix[2][1] / 1000, matrix[2][2] / 1000);
+
+        glVertex3f(matrix[2][0] / 1000, matrix[2][1] / 1000, matrix[2][2] / 1000);
+        glVertex3f(matrix[3][0] / 1000, matrix[3][1] / 1000, matrix[3][2] / 1000);
+
+        glVertex3f(matrix[3][0] / 1000, matrix[3][1] / 1000, matrix[3][2] / 1000);
+        glVertex3f(matrix[0][0] / 1000, matrix[0][1] / 1000, matrix[0][2] / 1000);
+
+        glVertex3f(matrix[0][0] / 1000, matrix[0][1] / 1000, matrix[0][2] / 1000);
+        glVertex3f(matrix[2][0] / 1000, matrix[2][1] / 1000, matrix[2][2] / 1000);
+
+        glVertex3f(matrix[3][0] / 1000, matrix[3][1] / 1000, matrix[3][2] / 1000);
+        glVertex3f(matrix[1][0] / 1000, matrix[1][1] / 1000, matrix[1][2] / 1000);
+        glEnd();
+
+    }
+
+    //_____________________________________________________________________________________
+
+    void Y_sheer_3d(float p1[3], float p2[3], float p3[3], float p4[3], float x_sheer, float z_sheer)
+    {
+        //cli input for rectangle sides and transform
+        //switch canse for all
+        glClear(GL_COLOR_BUFFER_BIT);
+        glColor3f(1.0, 0.0, 0.0);
+        glBegin(GL_LINES);
+
+        glVertex3f(p1[0] / 1000, p1[1] / 1000, p1[2] / 1000);
+        glVertex3f(p2[0] / 1000, p2[1] / 1000, p2[2] / 1000);
+
+        glVertex3f(p2[0] / 1000, p2[1] / 1000, p2[2] / 1000);
+        glVertex3f(p3[0] / 1000, p3[1] / 1000, p3[2] / 1000);
+
+        glVertex3f(p3[0] / 1000, p3[1] / 1000, p3[2] / 1000);
+        glVertex3f(p4[0] / 1000, p4[1] / 1000, p4[2] / 1000);
+
+        glVertex3f(p4[0] / 1000, p4[1] / 1000, p4[2] / 1000);
+        glVertex3f(p1[0] / 1000, p1[1] / 1000, p1[2] / 1000);
+
+        glVertex3f(p1[0] / 1000, p1[1] / 1000, p1[2] / 1000);
+        glVertex3f(p3[0] / 1000, p3[1] / 1000, p3[2] / 1000);
+
+        glVertex3f(p4[0] / 1000, p4[1] / 1000, p4[2] / 1000);
+        glVertex3f(p2[0] / 1000, p2[1] / 1000, p2[2] / 1000);
+        // glEnd();
+
+
+        float matrix[4][4] = { 0 };
+
+        float scaling[4][4] = { {1,0,0, 0},{x_sheer,1,z_sheer, 0},{0,0,1, 0},{0,0,0, 1} };
+
+        float temp[4][4] = { {p1[0],p1[1],p1[2], 1},{p2[0],p2[1],p2[2], 1},{p3[0],p3[1],p3[2], 1},{p4[0],p4[1],p4[2], 1} };
+
+
+
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                for (int k = 0; k < 4; k++) {
+                    matrix[i][j] += temp[i][k] * scaling[k][j];
+                }
+            }
+        }
+
+
+
+        glClear(GL_COLOR_BUFFER_BIT);
+        glColor3f(0.0, 1.0, 0.0);
+        glBegin(GL_LINES);
+
+        glVertex3f(matrix[0][0] / 1000, matrix[0][1] / 1000, matrix[0][2] / 1000);
+        glVertex3f(matrix[1][0] / 1000, matrix[1][1] / 1000, matrix[1][2] / 1000);
+
+        glVertex3f(matrix[1][0] / 1000, matrix[1][1] / 1000, matrix[1][2] / 1000);
+        glVertex3f(matrix[2][0] / 1000, matrix[2][1] / 1000, matrix[2][2] / 1000);
+
+        glVertex3f(matrix[2][0] / 1000, matrix[2][1] / 1000, matrix[2][2] / 1000);
+        glVertex3f(matrix[3][0] / 1000, matrix[3][1] / 1000, matrix[3][2] / 1000);
+
+        glVertex3f(matrix[3][0] / 1000, matrix[3][1] / 1000, matrix[3][2] / 1000);
+        glVertex3f(matrix[0][0] / 1000, matrix[0][1] / 1000, matrix[0][2] / 1000);
+
+        glVertex3f(matrix[0][0] / 1000, matrix[0][1] / 1000, matrix[0][2] / 1000);
+        glVertex3f(matrix[2][0] / 1000, matrix[2][1] / 1000, matrix[2][2] / 1000);
+
+        glVertex3f(matrix[3][0] / 1000, matrix[3][1] / 1000, matrix[3][2] / 1000);
+        glVertex3f(matrix[1][0] / 1000, matrix[1][1] / 1000, matrix[1][2] / 1000);
+        glEnd();
+
+    }
+
+
+    //_____________________________________________________________________________________
+
+    void Z_sheer_3d(float p1[3], float p2[3], float p3[3], float p4[3], float x_sheer, float y_sheer)
+    {
+        //cli input for rectangle sides and transform
+        //switch canse for all
+        glClear(GL_COLOR_BUFFER_BIT);
+        glColor3f(1.0, 0.0, 0.0);
+        glBegin(GL_LINES);
+
+        glVertex3f(p1[0] / 1000, p1[1] / 1000, p1[2] / 1000);
+        glVertex3f(p2[0] / 1000, p2[1] / 1000, p2[2] / 1000);
+
+        glVertex3f(p2[0] / 1000, p2[1] / 1000, p2[2] / 1000);
+        glVertex3f(p3[0] / 1000, p3[1] / 1000, p3[2] / 1000);
+
+        glVertex3f(p3[0] / 1000, p3[1] / 1000, p3[2] / 1000);
+        glVertex3f(p4[0] / 1000, p4[1] / 1000, p4[2] / 1000);
+
+        glVertex3f(p4[0] / 1000, p4[1] / 1000, p4[2] / 1000);
+        glVertex3f(p1[0] / 1000, p1[1] / 1000, p1[2] / 1000);
+
+        glVertex3f(p1[0] / 1000, p1[1] / 1000, p1[2] / 1000);
+        glVertex3f(p3[0] / 1000, p3[1] / 1000, p3[2] / 1000);
+
+        glVertex3f(p4[0] / 1000, p4[1] / 1000, p4[2] / 1000);
+        glVertex3f(p2[0] / 1000, p2[1] / 1000, p2[2] / 1000);
+        // glEnd();
+
+
+        float matrix[4][4] = { 0 };
+
+        float scaling[4][4] = { {1,0,0, 0},{0,1,0, 0},{x_sheer,y_sheer,1, 0},{0,0,0, 1} };
+
+        float temp[4][4] = { {p1[0],p1[1],p1[2], 1},{p2[0],p2[1],p2[2], 1},{p3[0],p3[1],p3[2], 1},{p4[0],p4[1],p4[2], 1} };
+
+
+
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                for (int k = 0; k < 4; k++) {
+                    matrix[i][j] += temp[i][k] * scaling[k][j];
+                }
+            }
+        }
+
+
+
+        glClear(GL_COLOR_BUFFER_BIT);
+        glColor3f(0.0, 1.0, 0.0);
+        glBegin(GL_LINES);
+
+        glVertex3f(matrix[0][0] / 1000, matrix[0][1] / 1000, matrix[0][2] / 1000);
+        glVertex3f(matrix[1][0] / 1000, matrix[1][1] / 1000, matrix[1][2] / 1000);
+
+        glVertex3f(matrix[1][0] / 1000, matrix[1][1] / 1000, matrix[1][2] / 1000);
+        glVertex3f(matrix[2][0] / 1000, matrix[2][1] / 1000, matrix[2][2] / 1000);
+
+        glVertex3f(matrix[2][0] / 1000, matrix[2][1] / 1000, matrix[2][2] / 1000);
+        glVertex3f(matrix[3][0] / 1000, matrix[3][1] / 1000, matrix[3][2] / 1000);
+
+        glVertex3f(matrix[3][0] / 1000, matrix[3][1] / 1000, matrix[3][2] / 1000);
+        glVertex3f(matrix[0][0] / 1000, matrix[0][1] / 1000, matrix[0][2] / 1000);
+
+        glVertex3f(matrix[0][0] / 1000, matrix[0][1] / 1000, matrix[0][2] / 1000);
+        glVertex3f(matrix[2][0] / 1000, matrix[2][1] / 1000, matrix[2][2] / 1000);
+
+        glVertex3f(matrix[3][0] / 1000, matrix[3][1] / 1000, matrix[3][2] / 1000);
+        glVertex3f(matrix[1][0] / 1000, matrix[1][1] / 1000, matrix[1][2] / 1000);
+        glEnd();
+
+    }
+
+
+    //_____________________________________________________________________________________
+
+    void Z_rotation_3d(float p1[3], float p2[3], float p3[3], float p4[3], float theta)
+    {
+        //cli input for rectangle sides and transform
+        //switch canse for all
+        glClear(GL_COLOR_BUFFER_BIT);
+        glColor3f(1.0, 0.0, 0.0);
+        glBegin(GL_LINES);
+
+        glVertex3f(p1[0] / 1000, p1[1] / 1000, p1[2] / 1000);
+        glVertex3f(p2[0] / 1000, p2[1] / 1000, p2[2] / 1000);
+
+        glVertex3f(p2[0] / 1000, p2[1] / 1000, p2[2] / 1000);
+        glVertex3f(p3[0] / 1000, p3[1] / 1000, p3[2] / 1000);
+
+        glVertex3f(p3[0] / 1000, p3[1] / 1000, p3[2] / 1000);
+        glVertex3f(p4[0] / 1000, p4[1] / 1000, p4[2] / 1000);
+
+        glVertex3f(p4[0] / 1000, p4[1] / 1000, p4[2] / 1000);
+        glVertex3f(p1[0] / 1000, p1[1] / 1000, p1[2] / 1000);
+
+        glVertex3f(p1[0] / 1000, p1[1] / 1000, p1[2] / 1000);
+        glVertex3f(p3[0] / 1000, p3[1] / 1000, p3[2] / 1000);
+
+        glVertex3f(p4[0] / 1000, p4[1] / 1000, p4[2] / 1000);
+        glVertex3f(p2[0] / 1000, p2[1] / 1000, p2[2] / 1000);
+        // glEnd();
+
+        float radian = theta * 3.14159 / 180;
+
+        float matrix[4][4] = { 0 };
+
+        float scaling[4][4] = { {cos(radian),-sin(radian),0, 0},{sin(radian),cos(radian),0, 0},{0,0,1, 0},{0,0,0, 1}};
+
+        float temp[4][4] = { {p1[0],p1[1],p1[2], 1},{p2[0],p2[1],p2[2], 1},{p3[0],p3[1],p3[2], 1},{p4[0],p4[1],p4[2], 1} };
+
+
+
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                for (int k = 0; k < 4; k++) {
+                    matrix[i][j] += temp[i][k] * scaling[k][j];
+                }
+            }
+        }
+
+
+
+        glClear(GL_COLOR_BUFFER_BIT);
+        glColor3f(0.0, 1.0, 0.0);
+        glBegin(GL_LINES);
+
+        glVertex3f(matrix[0][0] / 1000, matrix[0][1] / 1000, matrix[0][2] / 1000);
+        glVertex3f(matrix[1][0] / 1000, matrix[1][1] / 1000, matrix[1][2] / 1000);
+
+        glVertex3f(matrix[1][0] / 1000, matrix[1][1] / 1000, matrix[1][2] / 1000);
+        glVertex3f(matrix[2][0] / 1000, matrix[2][1] / 1000, matrix[2][2] / 1000);
+
+        glVertex3f(matrix[2][0] / 1000, matrix[2][1] / 1000, matrix[2][2] / 1000);
+        glVertex3f(matrix[3][0] / 1000, matrix[3][1] / 1000, matrix[3][2] / 1000);
+
+        glVertex3f(matrix[3][0] / 1000, matrix[3][1] / 1000, matrix[3][2] / 1000);
+        glVertex3f(matrix[0][0] / 1000, matrix[0][1] / 1000, matrix[0][2] / 1000);
+
+        glVertex3f(matrix[0][0] / 1000, matrix[0][1] / 1000, matrix[0][2] / 1000);
+        glVertex3f(matrix[2][0] / 1000, matrix[2][1] / 1000, matrix[2][2] / 1000);
+
+        glVertex3f(matrix[3][0] / 1000, matrix[3][1] / 1000, matrix[3][2] / 1000);
+        glVertex3f(matrix[1][0] / 1000, matrix[1][1] / 1000, matrix[1][2] / 1000);
+        glEnd();
+
+    }
+
+    //_____________________________________________________________________________________
+
+    void Y_rotation_3d(float p1[3], float p2[3], float p3[3], float p4[3], float theta)
+    {
+        //cli input for rectangle sides and transform
+        //switch canse for all
+        glClear(GL_COLOR_BUFFER_BIT);
+        glColor3f(1.0, 0.0, 0.0);
+        glBegin(GL_LINES);
+
+        glVertex3f(p1[0] / 1000, p1[1] / 1000, p1[2] / 1000);
+        glVertex3f(p2[0] / 1000, p2[1] / 1000, p2[2] / 1000);
+
+        glVertex3f(p2[0] / 1000, p2[1] / 1000, p2[2] / 1000);
+        glVertex3f(p3[0] / 1000, p3[1] / 1000, p3[2] / 1000);
+
+        glVertex3f(p3[0] / 1000, p3[1] / 1000, p3[2] / 1000);
+        glVertex3f(p4[0] / 1000, p4[1] / 1000, p4[2] / 1000);
+
+        glVertex3f(p4[0] / 1000, p4[1] / 1000, p4[2] / 1000);
+        glVertex3f(p1[0] / 1000, p1[1] / 1000, p1[2] / 1000);
+
+        glVertex3f(p1[0] / 1000, p1[1] / 1000, p1[2] / 1000);
+        glVertex3f(p3[0] / 1000, p3[1] / 1000, p3[2] / 1000);
+
+        glVertex3f(p4[0] / 1000, p4[1] / 1000, p4[2] / 1000);
+        glVertex3f(p2[0] / 1000, p2[1] / 1000, p2[2] / 1000);
+        // glEnd();
+
+        float radian = theta * 3.14159 / 180;
+
+        float matrix[4][4] = { 0 };
+
+        float scaling[4][4] = { {cos(radian),0,-sin(theta), 0},{0,1,0, 0},{sin(theta),0,cos(theta), 0},{0,0,0, 1}};
+
+        float temp[4][4] = { {p1[0],p1[1],p1[2], 1},{p2[0],p2[1],p2[2], 1},{p3[0],p3[1],p3[2], 1},{p4[0],p4[1],p4[2], 1} };
+
+
+
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                for (int k = 0; k < 4; k++) {
+                    matrix[i][j] += temp[i][k] * scaling[k][j];
+                }
+            }
+        }
+
+
+
+        glClear(GL_COLOR_BUFFER_BIT);
+        glColor3f(0.0, 1.0, 0.0);
+        glBegin(GL_LINES);
+
+        glVertex3f(matrix[0][0] / 1000, matrix[0][1] / 1000, matrix[0][2] / 1000);
+        glVertex3f(matrix[1][0] / 1000, matrix[1][1] / 1000, matrix[1][2] / 1000);
+
+        glVertex3f(matrix[1][0] / 1000, matrix[1][1] / 1000, matrix[1][2] / 1000);
+        glVertex3f(matrix[2][0] / 1000, matrix[2][1] / 1000, matrix[2][2] / 1000);
+
+        glVertex3f(matrix[2][0] / 1000, matrix[2][1] / 1000, matrix[2][2] / 1000);
+        glVertex3f(matrix[3][0] / 1000, matrix[3][1] / 1000, matrix[3][2] / 1000);
+
+        glVertex3f(matrix[3][0] / 1000, matrix[3][1] / 1000, matrix[3][2] / 1000);
+        glVertex3f(matrix[0][0] / 1000, matrix[0][1] / 1000, matrix[0][2] / 1000);
+
+        glVertex3f(matrix[0][0] / 1000, matrix[0][1] / 1000, matrix[0][2] / 1000);
+        glVertex3f(matrix[2][0] / 1000, matrix[2][1] / 1000, matrix[2][2] / 1000);
+
+        glVertex3f(matrix[3][0] / 1000, matrix[3][1] / 1000, matrix[3][2] / 1000);
+        glVertex3f(matrix[1][0] / 1000, matrix[1][1] / 1000, matrix[1][2] / 1000);
+        glEnd();
+
+    }
+
+    //_____________________________________________________________________________________
+
+    void X_rotation_3d(float p1[3], float p2[3], float p3[3], float p4[3], float theta)
+    {
+        //cli input for rectangle sides and transform
+        //switch canse for all
+        glClear(GL_COLOR_BUFFER_BIT);
+        glColor3f(1.0, 0.0, 0.0);
+        glBegin(GL_LINES);
+
+        glVertex3f(p1[0] / 1000, p1[1] / 1000, p1[2] / 1000);
+        glVertex3f(p2[0] / 1000, p2[1] / 1000, p2[2] / 1000);
+
+        glVertex3f(p2[0] / 1000, p2[1] / 1000, p2[2] / 1000);
+        glVertex3f(p3[0] / 1000, p3[1] / 1000, p3[2] / 1000);
+
+        glVertex3f(p3[0] / 1000, p3[1] / 1000, p3[2] / 1000);
+        glVertex3f(p4[0] / 1000, p4[1] / 1000, p4[2] / 1000);
+
+        glVertex3f(p4[0] / 1000, p4[1] / 1000, p4[2] / 1000);
+        glVertex3f(p1[0] / 1000, p1[1] / 1000, p1[2] / 1000);
+
+        glVertex3f(p1[0] / 1000, p1[1] / 1000, p1[2] / 1000);
+        glVertex3f(p3[0] / 1000, p3[1] / 1000, p3[2] / 1000);
+
+        glVertex3f(p4[0] / 1000, p4[1] / 1000, p4[2] / 1000);
+        glVertex3f(p2[0] / 1000, p2[1] / 1000, p2[2] / 1000);
+        // glEnd();
+
+        float radian = theta * 3.14159 / 180;
+
+        float matrix[4][4] = { 0 };
+
+        float scaling[4][4] = { {1,0,0, 0},{0,cos(radian),sin(theta), 0},{0,-sin(theta),cos(theta), 0},{0,0,0, 1}};
+
+        float temp[4][4] = { {p1[0],p1[1],p1[2], 1},{p2[0],p2[1],p2[2], 1},{p3[0],p3[1],p3[2], 1},{p4[0],p4[1],p4[2], 1} };
+
+
+
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                for (int k = 0; k < 4; k++) {
+                    matrix[i][j] += temp[i][k] * scaling[k][j];
+                }
+            }
+        }
+
+
+
+        glClear(GL_COLOR_BUFFER_BIT);
+        glColor3f(0.0, 1.0, 0.0);
+        glBegin(GL_LINES);
+
+        glVertex3f(matrix[0][0] / 1000, matrix[0][1] / 1000, matrix[0][2] / 1000);
+        glVertex3f(matrix[1][0] / 1000, matrix[1][1] / 1000, matrix[1][2] / 1000);
+
+        glVertex3f(matrix[1][0] / 1000, matrix[1][1] / 1000, matrix[1][2] / 1000);
+        glVertex3f(matrix[2][0] / 1000, matrix[2][1] / 1000, matrix[2][2] / 1000);
+
+        glVertex3f(matrix[2][0] / 1000, matrix[2][1] / 1000, matrix[2][2] / 1000);
+        glVertex3f(matrix[3][0] / 1000, matrix[3][1] / 1000, matrix[3][2] / 1000);
+
+        glVertex3f(matrix[3][0] / 1000, matrix[3][1] / 1000, matrix[3][2] / 1000);
+        glVertex3f(matrix[0][0] / 1000, matrix[0][1] / 1000, matrix[0][2] / 1000);
+
+        glVertex3f(matrix[0][0] / 1000, matrix[0][1] / 1000, matrix[0][2] / 1000);
+        glVertex3f(matrix[2][0] / 1000, matrix[2][1] / 1000, matrix[2][2] / 1000);
+
+        glVertex3f(matrix[3][0] / 1000, matrix[3][1] / 1000, matrix[3][2] / 1000);
+        glVertex3f(matrix[1][0] / 1000, matrix[1][1] / 1000, matrix[1][2] / 1000);
+        glEnd();
+
+    }
 
 
 
@@ -1268,24 +1855,20 @@ int main()
         glColor3f(1.0, 0.0, 0.0);
         glBegin(GL_LINES);
        
-   
-
-       
-     
-      
-      
-
         //liang_barsky_clipper(-100,-100,200,200, -330,-450, 250, 250);
         glEnd();
-
-        rotation(300,100, 500,200, -60);
+        float t1[3] = {100,100,100};
+        float t2[3] = { 100,200,100 };
+        float t3[3] = { 100,100,200 };
+        float t4[3] = { 200,100,100 };
+        Z_sheer_3d(t1,t2,t3,t4, 2,-2);
         //translation(0, 0, 300, 300, 100, 100);
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
 
         /* Poll for and process events */
         glfwPollEvents();
-        cout << "udf";
+        std::cout << "udf";
     }
     //     int q;
       //   cin >> q;
