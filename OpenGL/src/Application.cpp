@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+
 using namespace std;
 
 void delay(int number_of_seconds)
@@ -850,6 +851,22 @@ void liang_barsky_clipper(float xmin, float ymin, float xmax, float ymax,
     
 }
 
+
+
+                    /*
+                      ______          _______
+                     /      \        /       \
+                    /$$$$$$  |       $$$$$$$  |
+                    $$____$$ |______ $$ |  $$ |
+                     /    $$//      |$$ |  $$ |
+                    /$$$$$$/ $$$$$$/ $$ |  $$ |
+                    $$ |_____        $$ |__$$ |
+                    $$       |       $$    $$/
+                    $$$$$$$$/        $$$$$$$/
+
+                    */
+
+
 void scaling(float x1,float y1, float x2, float y2, float X_scale, float y_scale)
 {
     //cli input for rectangle sides and transform
@@ -1106,7 +1123,7 @@ void translation(float x1, float y1, float x2, float y2, float X_tran, float y_t
 
 }
 
-    void X_sheering(float x1, float y1, float x2, float y2, int x_sheer)
+    void X_sheering(float x1, float y1, float x2, float y2, float x_sheer)
     {
         //cli input for rectangle sides and transform
         //switch canse for all
@@ -1168,7 +1185,7 @@ void translation(float x1, float y1, float x2, float y2, float X_tran, float y_t
 
     }
 
-    void Y_sheering(float x1, float y1, float x2, float y2, int y_sheer)
+    void Y_sheering(float x1, float y1, float x2, float y2, float y_sheer)
     {
         //cli input for rectangle sides and transform
         //switch canse for all
@@ -1204,11 +1221,128 @@ void translation(float x1, float y1, float x2, float y2, float X_tran, float y_t
                     temp[i][j] += matrix[i][k] * scaling[k][j];
                 }
 
-        x1 = temp[0][0];
-        y1 = temp[0][1];
 
-        x2 = temp[1][0];
-        y2 = temp[2][1];
+
+        glClear(GL_COLOR_BUFFER_BIT);
+        glColor3f(0.0, 1.0, 0.0);
+
+
+        glVertex2f(temp[0][0] / 1000, temp[0][1] / 1000);
+        glVertex2f(temp[1][0] / 1000, temp[1][1] / 1000);
+
+        glVertex2f(temp[1][0] / 1000, temp[1][1] / 1000);
+        glVertex2f(temp[2][0] / 1000, temp[2][1] / 1000);
+
+        glVertex2f(temp[2][0] / 1000, temp[2][1] / 1000);
+        glVertex2f(temp[3][0] / 1000, temp[3][1] / 1000);
+
+        glVertex2f(temp[3][0] / 1000, temp[3][1] / 1000);
+        glVertex2f(temp[0][0] / 1000, temp[0][1] / 1000);
+
+        glEnd();
+
+
+    }
+
+
+
+
+
+    void X_reflection(float x1, float y1, float x2, float y2)
+    {
+        //cli input for rectangle sides and transform
+        //switch canse for all
+        glClear(GL_COLOR_BUFFER_BIT);
+        glColor3f(1.0, 0.0, 0.0);
+        glBegin(GL_LINES);
+
+        glVertex2f(x1 / 1000, y1 / 1000);
+        glVertex2f(x2 / 1000, y1 / 1000);
+
+        glVertex2f(x2 / 1000, y1 / 1000);
+        glVertex2f(x2 / 1000, y2 / 1000);
+
+        glVertex2f(x2 / 1000, y2 / 1000);
+        glVertex2f(x1 / 1000, y2 / 1000);
+
+        glVertex2f(x1 / 1000, y2 / 1000);
+        glVertex2f(x1 / 1000, y1 / 1000);
+
+
+
+
+        float matrix[4][3] = { {x1,y1,1},{x2,y1,1},{x2,y2,1},{x1,y2,1} };
+
+        float scaling[3][3] = { {1,0,0},{0, -1,0}, {0, 0, 1} };
+
+        float temp[4][3] = { 0 };
+
+        for (int i = 0; i < 4; i++)
+            for (int j = 0; j < 3; j++)
+                for (int k = 0; k < 3; k++)
+                {
+                    temp[i][j] += matrix[i][k] * scaling[k][j];
+                }
+
+
+
+        glClear(GL_COLOR_BUFFER_BIT);
+        glColor3f(0.0, 1.0, 0.0);
+
+
+        glVertex2f(temp[0][0] / 1000, temp[0][1] / 1000);
+        glVertex2f(temp[1][0] / 1000, temp[1][1] / 1000);
+
+        glVertex2f(temp[1][0] / 1000, temp[1][1] / 1000);
+        glVertex2f(temp[2][0] / 1000, temp[2][1] / 1000);
+
+        glVertex2f(temp[2][0] / 1000, temp[2][1] / 1000);
+        glVertex2f(temp[3][0] / 1000, temp[3][1] / 1000);
+
+        glVertex2f(temp[3][0] / 1000, temp[3][1] / 1000);
+        glVertex2f(temp[0][0] / 1000, temp[0][1] / 1000);
+
+        glEnd();
+
+    }
+
+    void Y_reflection(float x1, float y1, float x2, float y2)
+    {
+        //cli input for rectangle sides and transform
+        //switch canse for all
+        glClear(GL_COLOR_BUFFER_BIT);
+        glColor3f(1.0, 0.0, 0.0);
+        glBegin(GL_LINES);
+
+        glVertex2f(x1 / 1000, y1 / 1000);
+        glVertex2f(x2 / 1000, y1 / 1000);
+
+        glVertex2f(x2 / 1000, y1 / 1000);
+        glVertex2f(x2 / 1000, y2 / 1000);
+
+        glVertex2f(x2 / 1000, y2 / 1000);
+        glVertex2f(x1 / 1000, y2 / 1000);
+
+        glVertex2f(x1 / 1000, y2 / 1000);
+        glVertex2f(x1 / 1000, y1 / 1000);
+
+
+
+
+        float matrix[4][3] = { {x1,y1,1},{x2,y1,1},{x2,y2,1},{x1,y2,1} };
+
+        float scaling[3][3] = { {-1,0,0},{0, 1,0}, {0, 0, 1} };
+
+        float temp[4][3] = { 0 };
+
+        for (int i = 0; i < 4; i++)
+            for (int j = 0; j < 3; j++)
+                for (int k = 0; k < 3; k++)
+                {
+                    temp[i][j] += matrix[i][k] * scaling[k][j];
+                }
+
+
 
         glClear(GL_COLOR_BUFFER_BIT);
         glColor3f(0.0, 1.0, 0.0);
@@ -1230,6 +1364,20 @@ void translation(float x1, float y1, float x2, float y2, float X_tran, float y_t
 
     }
 //_____________________________________________________________________________________
+
+                        /*
+                          ______           _______
+                         /      \         /       \
+                        /$$$$$$  |        $$$$$$$  |
+                        $$ ___$$ | ______ $$ |  $$ |
+                          /   $$< /      |$$ |  $$ |
+                         _$$$$$  |$$$$$$/ $$ |  $$ |
+                        /  \__$$ |        $$ |__$$ |
+                        $$    $$/         $$    $$/
+                         $$$$$$/          $$$$$$$/
+                                                   */
+
+
 
     void translation_3d(float p1[3], float p2[3], float p3[3], float p4[3], float X_tran, float y_tran, float z_tran)
     {
@@ -1821,6 +1969,9 @@ void translation(float x1, float y1, float x2, float y2, float X_tran, float y_t
 
 
 
+
+
+
 int main()
 {
     GLFWwindow* window;
@@ -1830,7 +1981,7 @@ int main()
         return -1;
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(1000, 1000, "dotnet meow", NULL, NULL);
+    window = glfwCreateWindow(1000, 1000, "C-57 Arya Pathak", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -1846,29 +1997,93 @@ int main()
         std::cout << "Error" << std::endl;
 
     std::cout << glGetString(GL_VERSION) << std::endl;
-
+    float x1, y1, x2, y2;
+    int value;
+    std::cout << "Enter the x1, y1, x2, y2 of the quadrilateral\n";
+    std::cin >> x1 >> y1 >> x2 >> y2;
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window)) {
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
-        glColor3f(1.0, 0.0, 0.0);
+        glColor3f(1.0, 1.0, 1.0);
         glBegin(GL_LINES);
+        glVertex2f(1000,0);
+        glVertex2f(-1000, 0);
+        glVertex2f(0, 1000);
+        glVertex2f(0, - 1000);
        
         //liang_barsky_clipper(-100,-100,200,200, -330,-450, 250, 250);
-        glEnd();
+      /*  glEnd();
         float t1[3] = {100,100,100};
         float t2[3] = { 100,200,100 };
         float t3[3] = { 100,100,200 };
-        float t4[3] = { 200,100,100 };
-        Z_sheer_3d(t1,t2,t3,t4, 2,-2);
+        float t4[3] = { 200,100,100 };*/
+        //Z_sheer_3d(t1,t2,t3,t4, 2,-2);
+       /* X_reflection(100, 100, 400, 400);
+        Y_reflection(100, 100, 400, 400);*/
         //translation(0, 0, 300, 300, 100, 100);
         /* Swap front and back buffers */
+      
+     
+        std::cout << "1) Scaling 2) translation 3) Rotation 4) Reflection along X-axis 5) Reflection along Y_axis 6) X-sheer 7) Y-sheer\n";
+       
+        std::cin >> value;
+        switch (value) {
+        case 1:
+            float x_scale, y_scale;
+            std::cout << "Enter x and y scaling factor\n";
+            std::cin >> x_scale >> y_scale;
+            scaling(x1,y1,x2,y2, x_scale, y_scale);
+            break;
+        case 2:
+            float x_tr, y_tr;
+            std::cout << "Enter x and y translation value\n";
+            std::cin >> x_tr >> y_tr;
+            translation(x1, y1, x2, y2, x_tr, y_tr);
+            break;
+        case 3:
+            float _theta;
+            std::cout << "Enter theta\n";
+            std::cin >> _theta;
+            rotation(x1, y1, x2, y2, _theta);
+            break;
+        case 4:
+            X_reflection(x1, y1, x2, y2);
+            break;
+        case 5:
+            Y_reflection(x1, y1, x2, y2);
+            break;
+        case 6:
+            float sheerFac;
+            std::cout << "Enter x sheer factor\n";
+            std::cin >> sheerFac;
+            X_sheering(x1, y1, x2, y2, sheerFac);
+            break;
+        case 7:
+            float sheerFacY;
+            std::cout << "Enter  y sheer factor\n";
+            std::cin >> sheerFacY;
+            Y_sheering(x1, y1, x2, y2, sheerFacY);
+            break;
+        default:
+            std::cout << "Invalid input. Please enter a number between 1 and 7." << std::endl;
+        }
+     /*   scaling();
+        translation();
+        rotation();
+        X_reflection();
+        Y_reflection();
+        X_sheering();
+        Y_sheering();*/
+        
+
+
         glfwSwapBuffers(window);
 
         /* Poll for and process events */
         glfwPollEvents();
-        std::cout << "udf";
+        //std::cout << "udf";
     }
     //     int q;
       //   cin >> q;
