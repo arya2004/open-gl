@@ -789,7 +789,7 @@ void liang_barsky_clipper(float xmin, float ymin, float xmax, float ymax,
     glVertex2f(xmin/1000, ymin/1000);
 
   
-    //rectangle(xmin, ymin, xmax, ymax); // drawing the clipping window
+   //rectangle(xmin, ymin, xmax, ymax); // drawing the clipping window
 
     if ((p1 == 0 && q1 < 0) || (p2 == 0 && q2 < 0) || (p3 == 0 && q3 < 0) || (p4 == 0 && q4 < 0)) {
         cout << "line parrl  to win";
@@ -835,6 +835,8 @@ void liang_barsky_clipper(float xmin, float ymin, float xmax, float ymax,
 
     xn2 = x1 + p2 * rn2;
     yn2 = y1 + p4 * rn2;
+    glClear(GL_COLOR_BUFFER_BIT);
+    glColor3f(1.0, 1.0, 0.0);
    
     glVertex2f(xn1/1000, yn1/1000);
     glVertex2f(xn2/1000, yn2/1000); // the drawing the new line
@@ -849,6 +851,8 @@ void liang_barsky_clipper(float xmin, float ymin, float xmax, float ymax,
 
     glVertex2f(x2/1000, y2/1000);
     glVertex2f(xn2/1000, yn2/1000);
+   
+    glEnd();
     
 }
 
@@ -2522,6 +2526,157 @@ void translation(float x1, float y1, float x2, float y2, float X_tran, float y_t
 
     }
 
+//_____________________________________________________________________________
+
+    using namespace std;
+
+    struct Point {
+        double x, y;
+        int code;
+
+        Point(double x, double y) {
+            this->x = x;
+            this->y = y;
+            code = 0;
+        }
+
+        void setCode(double xMin, double xMax, double yMin, double yMax) {
+            code = 0;
+            if (x < xMin) code |= 1;
+            if (x > xMax) code |= 2;
+            if (y < yMin) code |= 4;
+            if (y > yMax) code |= 8;
+        }
+    };
+
+    struct Line {
+        Point p1, p2;
+    };
+
+    void cohenSutherland(Line line, double xMin, double xMax, double yMin, double yMax) {
+        line.p1.setCode(xMin, xMax, yMin, yMax);
+        line.p2.setCode(xMin, xMax, yMin, yMax);
+
+        int code1 = line.p1.code;
+        int code2 = line.p2.code;
+
+        while (true) {
+            // cout<<"("<<line.p1.x<<", "<<line.p1.y<<") -> ("<<line.p2.x<<", "<<line.p2.y<<")"<<endl;
+            // cout<<"code1: "<<code1<<", code2: "<<code2<<endl;
+            if ((code1 | code2) == 0) {
+               // cout << "Line is completely inside the window, Accept (" << line.p1.x << ", " << line.p1.y << ") to (" << line.p2.x << ", " << line.p2.y << ")" << endl;
+                glClear(GL_COLOR_BUFFER_BIT);
+                glColor3f(1.0, 0.0, 0.0);
+             
+
+                glVertex2f(line.p1.x / 1000, line.p1.y / 1000);
+                glVertex2f(line.p2.x / 1000, line.p2.y / 1000);
+                break;
+            }
+            else if ((code1 & code2) != 0) {
+               // cout << "Line is completely outside the window, Reject (" << line.p1.x << ", " << line.p1.y << ") to (" << line.p2.x << ", " << line.p2.y << ")" << endl;
+                glClear(GL_COLOR_BUFFER_BIT);
+                glColor3f(0.0, 0.0, 1.0);
+
+
+                glVertex2f(line.p1.x / 1000, line.p1.y / 1000);
+                glVertex2f(line.p2.x / 1000, line.p2.y / 1000);
+                break;
+            }
+            else {
+                int codeOut = code1 ? code1 : code2;
+                double x, y;
+
+                // order is from left to right
+
+                if (codeOut & 8) {
+                    x = line.p1.x + (line.p2.x - line.p1.x) * (yMax - line.p1.y) / (line.p2.y - line.p1.y);
+                    y = yMax;
+                }
+                else if (codeOut & 4) {
+                    x = line.p1.x + (line.p2.x - line.p1.x) * (yMin - line.p1.y) / (line.p2.y - line.p1.y);
+                    y = yMin;
+                }
+                else if (codeOut & 2) {
+                    y = line.p1.y + (line.p2.y - line.p1.y) * (xMax - line.p1.x) / (line.p2.x - line.p1.x);
+                    x = xMax;
+                }
+                else if (codeOut & 1) {
+                    y = line.p1.y + (line.p2.y - line.p1.y) * (xMin - line.p1.x) / (line.p2.x - line.p1.x);
+                    x = xMin;
+                }
+
+                if (codeOut == code1) {
+                    // if codeOut was code1, then update code1 and p1
+                    line.p1.x = x;
+                    line.p1.y = y;
+                    line.p1.setCode(xMin, xMax, yMin, yMax);
+                    code1 = line.p1.code;
+                }
+                else {
+                    // if codeOut was code2, then update code2 and p2
+                    line.p2.x = x;
+                    line.p2.y = y;
+                    line.p2.setCode(xMin, xMax, yMin, yMax);
+                    code2 = line.p2.code;
+                }
+            }
+        }
+    }
+
+    int man()
+    {
+        double xMin, xMax, yMin, yMax;
+
+        std::cout << "Enter xMin: ";
+        std::cin >> xMin;
+        std::cout << "Enter xMax: ";
+        std::cin >> xMax;
+        std::cout << "Enter yMin: ";
+        std::cin >> yMin;
+        std::cout << "Enter yMax: ";
+        std::cin >> yMax;
+
+        int numLines;
+        std::cout << "Enter the number of lines: ";
+        std::cin >> numLines;
+
+        std::vector<Line> lines;
+
+        for (int i = 0; i < numLines; ++i) {
+            double x1, y1, x2, y2;
+            std::cout << "Enter coordinates for Line " << i + 1 << " (x1 y1 x2 y2): ";
+            std::cin >> x1 >> y1 >> x2 >> y2;
+
+            Line line = { Point(x1, y1), Point(x2, y2) };
+            lines.push_back(line);
+        }
+        glClear(GL_COLOR_BUFFER_BIT);
+        glColor3f(1.0, 1.0, 0.0);
+
+
+        glVertex2f(xMin / 1000, yMin/ 1000);
+        glVertex2f(xMax / 1000, yMin / 1000);
+
+        glVertex2f(xMax / 1000, yMin / 1000);
+        glVertex2f(xMax / 1000, yMax / 1000);
+
+        glVertex2f(xMax / 1000, yMax / 1000);
+        glVertex2f(xMin / 1000, yMax / 1000);
+
+        glVertex2f(xMin / 1000, yMax / 1000);
+        glVertex2f(xMin / 1000, yMin / 1000);
+
+
+        for (const Line& line : lines) {
+            cohenSutherland(line, xMin, xMax, yMin, yMax);
+
+        }
+    
+
+        return 0;
+    }
+
   
 
 
@@ -2551,134 +2706,37 @@ int main()
         std::cout << "Error" << std::endl;
 
     std::cout << glGetString(GL_VERSION) << std::endl;
-    float x1, y1, z1, x2, y2, z2, x3,y3, z3,x4,y4, z4;
-    int value;
-    std::cout << "Enter the x1, y1, z1, x2, y2, z2, x3,y3, z3,x4,y4, z4 of the quadrilateral\n";
-    //std::cin >> x1 >> y1 >> z1 >> x2 >> y2 >> z2 >> x3 >> y3 >> z3 >> x4 >> y4 >> z4;
-    std::cout << "100 100 100 150 200 100 150 150 200 200 100 100 \n";
+    ////float x1, y1, z1, x2, y2, z2, x3,y3, z3,x4,y4, z4;
+    float xmin; float ymin; float xmax; float ymax;
+        float x1; float y1; float x2; float y2;
+   
+    //
+   std::cout << "Enter float xmin; float ymin; float xmax; float ymax; float x1; float y1; float x2; float y2\n";
+    std::cin >> xmin >> ymin >> xmax >> ymax >> x1 >> y1 >> x2 >> y2;
+    //std::cout << "-100 -100 200 200 -330 -450 250 250\n";
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window)) {
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
         glColor3f(1.0, 1.0, 1.0);
+   
         glBegin(GL_LINES);
-        glVertex2f(1000,0);
-        glVertex2f(-1000, 0);
-        glVertex2f(0, 1000);
-        glVertex2f(0, - 1000);
+
        
-        //liang_barsky_clipper(-100,-100,200,200, -330,-450, 250, 250);
-       // glEnd();
-        float t1[3] = {100,100,100};
+        liang_barsky_clipper(xmin , ymin , xmax , ymax , x1 , y1 , x2 , y2);
+      
+        glEnd();
+    
+        float t1[3] = { 100,100,100 };
         float t2[3] = { 150,200,100 };
         float t3[3] = { 150,150,200 };
         float t4[3] = { 200,100,100 };
- /*       float t1[3] = { x1,y1,z1 };
-        float t2[3] = { x2,y2,z2 };
-        float t3[3] = { x3,y3,z3 };
-        float t4[3] = { x4,y4,z4 };*/
-        //Z_sheer_3d(t1,t2,t3,t4, -1,-2);
-       // Z_rotation_3d(t1, t2, t3, t4, 40);
-        //Z_rotation_parallel_3d(t1, t2, t3, t4, 40, 0, 0);
-       // XY_Reflection(t1, t2, t3, t4);
-       /* X_reflection(100, 100, 400, 400);
-        Y_reflection(100, 100, 400, 400);*/
-       // translation(0, 0, 300, 300, 100, 100);
-        /* Swap front and back buffers */
+        /*       float t1[3] = { x1,y1,z1 };
+               float t2[3] = { x2,y2,z2 };
+               float t3[3] = { x3,y3,z3 };
+               float t4[3] = { x4,y4,z4 };*/
+               //Z_sheer_3d(t1,t2,t3,t4, -1,-2);
 
-        std::cout << "1> Translation 2> Scaling 3> X-Sheer 4> Y-Sheer 5> Z-Sheer 6> X axis Rotation 7> Y axis Rotation 8> Z axis Rotation 9> Parralel to X axis Rotation 10> Parralel to Y axis Rotation 11> Parralel to Z axis Rotation 12> XY-Plane Rotation 13> YZ-Plane Rotation 14> XZ-PLane Rotation\n";
-       
-        std::cin >> value;
-        switch (value) {
-        case 1:
-            float xa, ya, za;
-            std::cout << "Enter x y z translation value \n";
-            std::cin >> xa >> ya >> za;
-           
-            translation_3d(t1, t2, t3, t4, xa, ya , za);
-
-            break;
-        case 2:
-            float x, y, z;
-            std::cout << "Enter x y z scaling factor\n";
-            std::cin >> x >> y >> z;
-           
-            scaling_3d(t1, t2, t3, t4, x, y, z);
-            break;
-        case 3:
-            float xz, yz;
-            std::cout << "Enter y z sheer factor\n";
-            std::cin >> xz >> yz ;
-           
-            X_sheer_3d(t1, t2, t3, t4, xz, yz);
-            break;
-        case 4:
-            float xs, ys;
-            std::cout << "Enter x z sheer factor\n";
-            std::cin >> xs >> ys;
-            Y_sheer_3d(t1, t2, t3, t4, xs, ys);
-            break;
-        case 5:
-            float xd, yd;
-            std::cout << "Enter x y sheer factor\n";
-            std::cin >> xd >> yd;
-            Z_sheer_3d(t1, t2, t3, t4, xd, yd);
-            break;
-        case 6:
-            float theta;
-            std::cout << "Enter theta\n";
-            std::cin >> theta;
-            X_rotation_3d(t1, t2, t3, t4, theta);
-            break;
-        case 7:
-            float thetaq;
-            std::cout << "Enter theta\n";
-            std::cin >> thetaq;
-            Y_rotation_3d(t1, t2, t3, t4, thetaq);
-            break;
-        case 8:
-           float thetaaa;
-            std::cout << "Enter theta\n";
-            std::cin >> thetaaa;
-            Z_rotation_3d(t1, t2, t3, t4, thetaaa);
-            break;
-        case 9:
-            float thetae, x_trne, y_trane ;
-            std::cout << "Enter theta y z offset from X-axis\n";
-            std::cin >> thetae >> x_trne >> y_trane;
-            X_rotation_parallel_3d(t1, t2, t3, t4, thetae, x_trne, y_trane);
-            break;
-        case 10:
-            float thetar, x_trnr, y_tranr;
-            std::cout << "Enter theta x z offset from Y-axis\n";
-            std::cin >> thetar >> x_trnr >> y_tranr;
-            Y_rotation_parallel_3d(t1, t2, t3, t4, thetar, x_trnr, y_tranr);
-            break;
-        case 11:
-            float thetau, x_trnu, y_tranu;
-            std::cout << "Enter theta x y offset from Z-axis\n";
-            std::cin >> thetau >> x_trnu >> y_tranu;
-            Z_rotation_parallel_3d(t1, t2, t3, t4, thetau, x_trnu, y_tranu);
-            break;
-        case 12:
-            XY_Reflection(t1, t2, t3, t4);
-            break;
-        case 13:
-            XZ_Reflection(t1, t2, t3, t4);
-            break;
-        case 14:
-            YZ_Reflection(t1, t2, t3, t4);
-            break;
-        default:
-            std::cout << "Invalid input. Please enter a number between 1 and 14." << std::endl;
-        }
-     /*   scaling();
-        translation();
-        rotation();
-        X_reflection();
-        Y_reflection();
-        X_sheering();
-        Y_sheering();*/
         
         
 
@@ -2695,3 +2753,17 @@ int main()
     return 0;
 
 }
+
+    /* Which of the favors of your Lord will you deny? */
+
+/**
+ *
+ * Cohen Sutherland Line Clipping Algorithm
+ * ---------------------------------------------
+ *
+ * Only works with rectangle like clip region.
+ *
+ */
+
+
+   
